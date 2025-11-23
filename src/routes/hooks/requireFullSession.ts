@@ -10,7 +10,8 @@ export async function requireFullSession(
 
   if (request.user.isTemporary) {
     return reply.status(403).send({
-      message: 'É necessário selecionar uma planta para continuar.'})
+      message: 'É necessário selecionar uma planta para continuar.',
+    })
   }
 
   return

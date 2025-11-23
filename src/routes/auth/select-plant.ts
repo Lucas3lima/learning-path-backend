@@ -44,7 +44,6 @@ export const selectPlantRoute: FastifyPluginAsyncZod = async (app) => {
         return reply.status(400).send({ message: 'Credenciais inválidas.' })
       }
 
-
       const linkedPlants = await db
         .select({
           id: userPlants.plantId,
@@ -54,10 +53,9 @@ export const selectPlantRoute: FastifyPluginAsyncZod = async (app) => {
         .where(
           and(
             eq(userPlants.plantId, plantId),
-            eq(userPlants.userId, result.sub)
-          )
+            eq(userPlants.userId, result.sub),
+          ),
         )
-
 
       if (linkedPlants.length === 0) {
         return reply
