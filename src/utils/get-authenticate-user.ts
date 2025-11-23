@@ -1,0 +1,13 @@
+import type { FastifyRequest } from 'fastify'
+
+export function getAuthenticatedUser(request: FastifyRequest) {
+  const user = request.user
+
+  console.log(`getAuthenticateUser: ${user}`)
+
+  if (!user) {
+    throw new Error('Invalid authentication')
+  }
+
+  return user
+}
