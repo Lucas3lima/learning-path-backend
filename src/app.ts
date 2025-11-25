@@ -14,6 +14,8 @@ import { createAccountRoute } from './routes/auth/create-account.ts'
 import { getProfileRoute } from './routes/auth/get-profile.ts'
 import { selectPlantRoute } from './routes/auth/select-plant.ts'
 import { createJourneys } from './routes/journeys/create-journeys.ts'
+import { getJourneysBySlug } from './routes/journeys/get-journeys-by-slug.ts'
+import { createModules } from './routes/modules/create-modules.ts'
 import { getUsersRoute } from './routes/users/get-users.ts'
 
 const app = fastify({
@@ -75,5 +77,9 @@ app.register(selectPlantRoute)
 
 // JOURNEYS
 app.register(createJourneys)
+app.register(getJourneysBySlug)
+
+// MODULES
+app.register(createModules)
 
 export { app }

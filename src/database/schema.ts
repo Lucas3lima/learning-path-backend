@@ -130,8 +130,10 @@ export const modules = pgTable(
   {
     id: uuid().primaryKey().defaultRandom(),
     title: text().notNull(),
+    description: text(),
     slug: text().notNull().unique(),
     order: integer().default(1),
+    hour: integer().notNull().default(0),
 
     created_at: timestamp({ withTimezone: true }).notNull().defaultNow(),
     updated_at: timestamp({ withTimezone: true }).notNull().defaultNow(),

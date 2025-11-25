@@ -1,0 +1,1 @@
+ALTER TABLE "modules" ADD COLUMN "hour" integer DEFAULT 0 NOT NULL;
