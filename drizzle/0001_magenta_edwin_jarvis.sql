@@ -1,0 +1,1 @@
+ALTER TABLE "journeys" DROP COLUMN "duration_hours";

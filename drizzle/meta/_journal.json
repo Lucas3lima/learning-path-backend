@@ -8,6 +8,13 @@
       "when": 1763510796779,
       "tag": "0000_tiny_tinkerer",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1764029320681,
+      "tag": "0001_magenta_edwin_jarvis",
+      "breakpoints": true
     }
   ]
 }

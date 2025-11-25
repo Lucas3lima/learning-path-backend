@@ -93,7 +93,6 @@ export const journeys = pgTable(
     slug: text().notNull().unique(),
     description: text(),
     thumbnail_url: text(),
-    duration_hours: integer(),
     level: trainingLevel().notNull().default('Beginner'),
 
     created_at: timestamp({ withTimezone: true }).notNull().defaultNow(),
