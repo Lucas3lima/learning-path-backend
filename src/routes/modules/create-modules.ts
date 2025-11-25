@@ -2,7 +2,7 @@ import { and, eq, sql } from 'drizzle-orm'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod'
 import { db } from '../../database/client.ts'
-import { journeys, modules, trainingLevelValues } from '../../database/schema.ts'
+import { journeys, modules } from '../../database/schema.ts'
 import { checkPlantRole } from '../../utils/check-plant-role.ts'
 import { createSlug } from '../../utils/create-slug.ts'
 import { getAuthenticatedUser } from '../../utils/get-authenticate-user.ts'
@@ -20,13 +20,13 @@ export const createModules: FastifyPluginAsyncZod = async (app) => {
       schema: {
         tags: ['modules'],
         summary: 'Create modules',
-        params:z.object({
-          journeySlug:z.string()
+        params: z.object({
+          journeySlug: z.string(),
         }),
         body: z.object({
           title: z.string().min(4),
           description: z.string(),
-          hour:z.number().min(1)
+          hour: z.number().min(1),
         }),
         response: {
           201: z.object({
@@ -49,22 +49,29 @@ export const createModules: FastifyPluginAsyncZod = async (app) => {
         })
       }
       const journey = await db
-      .select()
-      .from(journeys)
-      .where(and(eq(journeys.slug, journeySlug), eq(journeys.plantId, user.plantId)))
-      
+        .select()
+        .from(journeys)
+        .where(
+          and(
+            eq(journeys.slug, journeySlug),
+            eq(journeys.plantId, user.plantId),
+          ),
+        )
+
       if (journey.length === 0) {
         return reply.status(400).send({
           message: 'Trilha não encontrada.',
         })
       }
       const slug = createSlug(title)
-      
+
       const existingModules = await db
-      .select()
-      .from(modules)
-      .where(and(eq(modules.slug,slug), eq(modules.journeyId, journey[0].id)))
-      
+        .select()
+        .from(modules)
+        .where(
+          and(eq(modules.slug, slug), eq(modules.journeyId, journey[0].id)),
+        )
+
       if (existingModules.length > 0) {
         return reply.status(400).send({
           message: 'Já existe um módulo com esse nome nessa trilha.',
@@ -72,12 +79,11 @@ export const createModules: FastifyPluginAsyncZod = async (app) => {
       }
 
       const [{ nextOrder }] = await db
-      .select({
-        nextOrder: sql<number>`COALESCE(MAX(${modules.order}) + 1, 1)`
-      })
-      .from(modules)
-      .where(eq(modules.journeyId, journey[0].id))
-      
+        .select({
+          nextOrder: sql<number>`COALESCE(MAX(${modules.order}) + 1, 1)`,
+        })
+        .from(modules)
+        .where(eq(modules.journeyId, journey[0].id))
 
       const result = await db
         .insert(modules)
@@ -87,7 +93,7 @@ export const createModules: FastifyPluginAsyncZod = async (app) => {
           description,
           hour,
           order: nextOrder,
-          journeyId: journey[0].id
+          journeyId: journey[0].id,
         })
         .returning()
 

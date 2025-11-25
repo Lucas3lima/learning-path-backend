@@ -1,0 +1,1 @@
+ALTER TABLE "modules" DROP CONSTRAINT "modules_slug_unique";
