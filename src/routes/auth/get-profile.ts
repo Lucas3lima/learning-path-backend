@@ -8,8 +8,8 @@ import {
   users,
 } from '../../database/schema.ts'
 import { getAuthenticatedUser } from '../../utils/get-authenticate-user.ts'
-import { checkRequestJWT } from '../hooks/check-request-jwt.ts'
-import { requireFullSession } from '../hooks/requireFullSession.ts'
+import { checkRequestJWT } from '../_hooks/check-request-jwt.ts'
+import { requireFullSession } from '../_hooks/requireFullSession.ts'
 
 export const getProfileRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(

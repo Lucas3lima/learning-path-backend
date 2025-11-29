@@ -11,8 +11,8 @@ import {
   users,
 } from '../../database/schema.ts'
 import { getAuthenticatedUser } from '../../utils/get-authenticate-user.ts'
-import { checkRequestJWT } from '../hooks/check-request-jwt.ts'
-import { requireFullSession } from '../hooks/requireFullSession.ts'
+import { checkRequestJWT } from '../_hooks/check-request-jwt.ts'
+import { requireFullSession } from '../_hooks/requireFullSession.ts'
 
 export const getJourneyOverviewRoute: FastifyPluginAsyncZod = async (app) => {
   app.get(
@@ -40,10 +40,12 @@ export const getJourneyOverviewRoute: FastifyPluginAsyncZod = async (app) => {
             }),
 
             sectors: z.array(
-              z.object({
-                id: z.string(),
-                name: z.string(),
-              }).nullable(),
+              z
+                .object({
+                  id: z.string(),
+                  name: z.string(),
+                })
+                .nullable(),
             ),
 
             modules: z.array(

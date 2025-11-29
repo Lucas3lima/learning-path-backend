@@ -49,9 +49,7 @@
         "countries_slug_unique": {
           "name": "countries_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -117,12 +115,8 @@
           "name": "journey_sectors_journeyId_journeys_id_fk",
           "tableFrom": "journey_sectors",
           "tableTo": "journeys",
-          "columnsFrom": [
-            "journeyId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["journeyId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -130,12 +124,8 @@
           "name": "journey_sectors_sectorId_sectors_id_fk",
           "tableFrom": "journey_sectors",
           "tableTo": "sectors",
-          "columnsFrom": [
-            "sectorId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["sectorId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -244,12 +234,8 @@
           "name": "journeys_responsibleId_users_id_fk",
           "tableFrom": "journeys",
           "tableTo": "users",
-          "columnsFrom": [
-            "responsibleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["responsibleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -257,12 +243,8 @@
           "name": "journeys_plantId_plants_id_fk",
           "tableFrom": "journeys",
           "tableTo": "plants",
-          "columnsFrom": [
-            "plantId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["plantId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -272,9 +254,7 @@
         "journeys_slug_unique": {
           "name": "journeys_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -378,12 +358,8 @@
           "name": "lessons_moduleId_modules_id_fk",
           "tableFrom": "lessons",
           "tableTo": "modules",
-          "columnsFrom": [
-            "moduleId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["moduleId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -393,9 +369,7 @@
         "lessons_slug_unique": {
           "name": "lessons_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -494,12 +468,8 @@
           "name": "modules_journeyId_journeys_id_fk",
           "tableFrom": "modules",
           "tableTo": "journeys",
-          "columnsFrom": [
-            "journeyId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["journeyId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -553,12 +523,8 @@
           "name": "plants_country_id_countries_id_fk",
           "tableFrom": "plants",
           "tableTo": "countries",
-          "columnsFrom": [
-            "country_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["country_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -568,9 +534,7 @@
         "plants_slug_unique": {
           "name": "plants_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -649,12 +613,8 @@
           "name": "sectors_plantId_plants_id_fk",
           "tableFrom": "sectors",
           "tableTo": "plants",
-          "columnsFrom": [
-            "plantId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["plantId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -664,9 +624,7 @@
         "sectors_slug_unique": {
           "name": "sectors_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -740,12 +698,8 @@
           "name": "user_plants_userId_users_id_fk",
           "tableFrom": "user_plants",
           "tableTo": "users",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -753,12 +707,8 @@
           "name": "user_plants_plantId_plants_id_fk",
           "tableFrom": "user_plants",
           "tableTo": "plants",
-          "columnsFrom": [
-            "plantId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["plantId"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -834,16 +784,12 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         },
         "users_registration_number_unique": {
           "name": "users_registration_number_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "registration_number"
-          ]
+          "columns": ["registration_number"]
         }
       },
       "policies": {},
@@ -855,27 +801,17 @@
     "public.plant_role": {
       "name": "plant_role",
       "schema": "public",
-      "values": [
-        "student",
-        "manager"
-      ]
+      "values": ["student", "manager"]
     },
     "public.trainingLevel": {
       "name": "trainingLevel",
       "schema": "public",
-      "values": [
-        "Beginner",
-        "Intermediate",
-        "Advanced"
-      ]
+      "values": ["Beginner", "Intermediate", "Advanced"]
     },
     "public.user_role": {
       "name": "user_role",
       "schema": "public",
-      "values": [
-        "user",
-        "manager"
-      ]
+      "values": ["user", "manager"]
     }
   },
   "schemas": {},

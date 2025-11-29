@@ -6,8 +6,8 @@ import { journeys, modules } from '../../database/schema.ts'
 import { checkPlantRole } from '../../utils/check-plant-role.ts'
 import { createSlug } from '../../utils/create-slug.ts'
 import { getAuthenticatedUser } from '../../utils/get-authenticate-user.ts'
-import { checkRequestJWT } from '../hooks/check-request-jwt.ts'
-import { requireFullSession } from '../hooks/requireFullSession.ts'
+import { checkRequestJWT } from '../_hooks/check-request-jwt.ts'
+import { requireFullSession } from '../_hooks/requireFullSession.ts'
 export const createModules: FastifyPluginAsyncZod = async (app) => {
   app.post(
     '/journeys/:journeySlug/modules',

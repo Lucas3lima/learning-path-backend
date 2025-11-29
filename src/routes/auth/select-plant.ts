@@ -4,7 +4,7 @@ import z from 'zod'
 import { db } from '../../database/client.ts'
 import { userPlants, users } from '../../database/schema.ts'
 import { getAuthenticatedUser } from '../../utils/get-authenticate-user.ts'
-import { checkRequestJWT } from '../hooks/check-request-jwt.ts'
+import { checkRequestJWT } from '../_hooks/check-request-jwt.ts'
 
 export const selectPlantRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
