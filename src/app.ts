@@ -1,3 +1,4 @@
+import { error } from 'node:console'
 import path from 'node:path'
 import fastifyCors from '@fastify/cors'
 import fastifyJwt from '@fastify/jwt'
@@ -5,13 +6,14 @@ import fastifyMultipart from '@fastify/multipart'
 import fastifyStatic from '@fastify/static'
 import { fastifySwagger } from '@fastify/swagger'
 import scalarAPIReference from '@scalar/fastify-api-reference'
-import fastify from 'fastify'
+import fastify, { type FastifyError } from 'fastify'
 import {
   jsonSchemaTransform,
   serializerCompiler,
   validatorCompiler,
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod'
+import z, { ZodError } from 'zod'
 import { config } from './config/env.ts'
 import { authenticateRoute } from './routes/auth/authenticate.ts'
 import { createAccountRoute } from './routes/auth/create-account.ts'
@@ -84,6 +86,8 @@ app.register(fastifyStatic, {
   prefix: '/uploads/',
 })
 
+
+
 app.register(createAccountRoute)
 app.register(getUsersRoute)
 
@@ -102,5 +106,38 @@ app.register(createModules)
 
 // LESSONS
 app.register(createLessons)
+
+
+app.setErrorHandler((error, request, reply) => {
+  // 1️⃣ Erros do Zod
+  if (error instanceof ZodError) {
+    return reply.status(400).send({
+      status: 'error',
+      code: 'VALIDATION_FAILED',
+      detail: 'Alguns dados enviados são inválidos.',
+      errors: error.flatten().fieldErrors,
+    })
+  }
+
+  // 2️⃣ Erros do Fastify (ex: validação do schema)
+  if (typeof error === 'object' && error && 'validation' in error) {
+    const fastifyError = error as FastifyError & { validation?: any }
+    return reply.status(400).send({
+      status: 'error',
+      code: 'VALIDATION_FAILED',
+      detail: fastifyError.message,
+      errors: fastifyError.validation,
+    })
+  }
+
+  // 3️⃣ Outros erros desconhecidos
+  console.error(error)
+
+  return reply.status(500).send({
+    status: 'error',
+    code: 'SERVER_ERROR',
+    detail: 'Erro interno no servidor.',
+  })
+})
 
 export { app }

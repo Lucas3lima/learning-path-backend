@@ -139,13 +139,16 @@ export const createLessons: FastifyPluginAsyncZod = async (app) => {
       /** -------------------- Validações de negócio -------------------- */
 
       // campos obrigatórios
-      if (!title) return reply.status(400).send({ message: 'Título é obrigatório.' })
-      if (!content) return reply.status(400).send({ message: 'Conteúdo é obrigatório.' })
+      if (!title)
+        return reply.status(400).send({ message: 'Título é obrigatório.' })
+      if (!content)
+        return reply.status(400).send({ message: 'Conteúdo é obrigatório.' })
 
       // AO MENOS 1 entre pdf ou video
       if ((!pdf_url || pdf_url === null) && (!video_url || video_url === '')) {
         return reply.status(400).send({
-          message: 'É necessário enviar um arquivo PDF ou um link de vídeo (pelo menos um dos dois).',
+          message:
+            'É necessário enviar um arquivo PDF ou um link de vídeo (pelo menos um dos dois).',
         })
       }
 
@@ -155,11 +158,15 @@ export const createLessons: FastifyPluginAsyncZod = async (app) => {
       const existing = await db
         .select()
         .from(lessons)
-        .where(and(eq(lessons.moduleId, moduleData[0].id), eq(lessons.slug,slug)))
+        .where(
+          and(eq(lessons.moduleId, moduleData[0].id), eq(lessons.slug, slug)),
+        )
         .limit(1)
 
       if (existing.length > 0) {
-        return reply.status(409).send({ message: 'Já existe uma aula com esse título neste módulo.' })
+        return reply
+          .status(409)
+          .send({ message: 'Já existe uma aula com esse título neste módulo.' })
       }
 
       /** -------------------- Calcular order -------------------- */
@@ -194,7 +201,9 @@ export const createLessons: FastifyPluginAsyncZod = async (app) => {
         // Postgres UNIQUE_VIOLATION geralmente tem code '23505'.
         const pgCode = err?.code ?? err?.pg?.code
         if (pgCode === '23505') {
-          return reply.status(409).send({ message: 'Conflito: slug já existe neste módulo.' })
+          return reply
+            .status(409)
+            .send({ message: 'Conflito: slug já existe neste módulo.' })
         }
 
         // Log do erro no servidor e retorna 500 genérico

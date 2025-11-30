@@ -1,9 +1,10 @@
-import { hash } from 'bcryptjs'
-import { eq } from 'drizzle-orm'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod'
-import { db } from '../../database/client.ts'
-import { userPlants, userRoleValues, users } from '../../database/schema.ts'
+import { UserAlreadyExistsError } from '../../_erros/user-already-exists-error.ts'
+import { userRoleValues } from '../../database/schema.ts'
+import { DrizzleUserPlantsRepository } from '../../repositories/drizzle/drizzle-userPlants-repository.ts'
+import { DrizzleUsersRepository } from '../../repositories/drizzle/drizzle-users-repository.ts'
+import { CreateAccountUseCase } from '../../use-cases/createAccount.ts'
 export const createAccountRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     '/users',
@@ -23,6 +24,9 @@ export const createAccountRoute: FastifyPluginAsyncZod = async (app) => {
           201: z.object({
             userId: z.uuid(),
           }),
+          409: z.object({
+            message: z.string(),
+          }),
         },
       },
     },
@@ -30,46 +34,31 @@ export const createAccountRoute: FastifyPluginAsyncZod = async (app) => {
       const { name, email, password, registration_number, role, plant_id } =
         request.body
 
-      const userWithSameEmail = await db
-        .select()
-        .from(users)
-        .where(eq(users.email, email))
-        .limit(1)
+      try {
+        const usersRepository = new DrizzleUsersRepository()
+        const userPlantsRepository = new DrizzleUserPlantsRepository()
+        const createAccountUseCase = new CreateAccountUseCase(
+          usersRepository,
+          userPlantsRepository,
+        )
 
-      if (userWithSameEmail.length > 0) {
-        throw new Error('Email already exists')
-      }
-
-      const userWithSameRegistrationNumber = await db
-        .select()
-        .from(users)
-        .where(eq(users.registration_number, registration_number))
-        .limit(1)
-
-      if (userWithSameRegistrationNumber.length > 0) {
-        throw new Error('Registration number already exists')
-      }
-
-      const password_hash = await hash(password, 6)
-
-      const result = await db
-        .insert(users)
-        .values({
+        const { user } = await createAccountUseCase.execute({
           name,
           email,
-          password_hash,
+          password,
           registration_number,
-          role: role ?? 'user',
+          role,
+          plant_id,
         })
-        .returning()
 
-      await db.insert(userPlants).values({
-        plantId: plant_id,
-        userId: result[0].id,
-        role: role === 'manager' ? 'manager' : 'student',
-      })
+        return reply.status(201).send({ userId: user.id })
+      } catch (err) {
+        if (err instanceof UserAlreadyExistsError) {
+          return reply.status(409).send({ message: err.message })
+        }
 
-      return reply.status(201).send({ userId: result[0].id })
+        throw err
+      }
     },
   )
 }
