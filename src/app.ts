@@ -1,5 +1,8 @@
+import path from 'node:path'
 import fastifyCors from '@fastify/cors'
 import fastifyJwt from '@fastify/jwt'
+import fastifyMultipart from '@fastify/multipart'
+import fastifyStatic from '@fastify/static'
 import { fastifySwagger } from '@fastify/swagger'
 import scalarAPIReference from '@scalar/fastify-api-reference'
 import fastify from 'fastify'
@@ -17,6 +20,7 @@ import { selectPlantRoute } from './routes/auth/select-plant.ts'
 import { createJourneys } from './routes/journeys/create-journeys.ts'
 import { getAllJourneysRoute } from './routes/journeys/get-all-journeys.ts'
 import { getJourneyOverviewRoute } from './routes/journeys/get-journeys-by-slug.ts'
+import { createLessons } from './routes/lessons/create-lessons.ts'
 import { createModules } from './routes/modules/create-modules.ts'
 import { getUsersRoute } from './routes/users/get-users.ts'
 
@@ -69,6 +73,17 @@ app.register(fastifyJwt, {
   secret: config.JWT_SECRET,
 })
 
+app.register(fastifyMultipart, {
+  limits: {
+    fileSize: 10 * 1024 * 1024, //10MB
+  },
+})
+
+app.register(fastifyStatic, {
+  root: path.resolve('uploads'),
+  prefix: '/uploads/',
+})
+
 app.register(createAccountRoute)
 app.register(getUsersRoute)
 
@@ -84,5 +99,8 @@ app.register(getAllJourneysRoute)
 
 // MODULES
 app.register(createModules)
+
+// LESSONS
+app.register(createLessons)
 
 export { app }

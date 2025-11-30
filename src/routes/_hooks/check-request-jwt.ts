@@ -9,7 +9,7 @@ export async function checkRequestJWT(
   if (!token) {
     return reply.status(401).send({ message: 'Token não encontrado.' })
   }
-
+  console.log(token)
   try {
     const user = await request.jwtVerify<{
       sub: string
