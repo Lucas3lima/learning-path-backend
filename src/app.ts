@@ -86,8 +86,6 @@ app.register(fastifyStatic, {
   prefix: '/uploads/',
 })
 
-
-
 app.register(createAccountRoute)
 app.register(getUsersRoute)
 
@@ -106,7 +104,6 @@ app.register(createModules)
 
 // LESSONS
 app.register(createLessons)
-
 
 app.setErrorHandler((error, request, reply) => {
   // 1️⃣ Erros do Zod

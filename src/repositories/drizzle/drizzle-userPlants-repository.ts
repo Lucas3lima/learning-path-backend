@@ -1,4 +1,4 @@
-import type { InferInsertModel } from 'drizzle-orm'
+import { and, eq, type InferInsertModel } from 'drizzle-orm'
 import { db } from '../../database/client.ts'
 import { userPlants } from '../../database/schema.ts'
 import type { UserPlantsRepository } from '../userPlants-repository.ts'
@@ -11,4 +11,13 @@ export class DrizzleUserPlantsRepository implements UserPlantsRepository {
 
     return userPlant
   }
+  async findByUserIdAndPlantId(userId: string, plantId: string) {
+      const [userPlant] = await db
+        .select()
+        .from(userPlants)
+        .where(and(eq(userPlants.plantId, plantId), eq(userPlants.userId,userId)))
+        .limit(1)
+  
+      return userPlant
+    }
 }

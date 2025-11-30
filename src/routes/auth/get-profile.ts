@@ -1,12 +1,16 @@
 import { eq } from 'drizzle-orm'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod'
+import { NotFoundError } from '../../_erros/not-found-error.ts'
 import { db } from '../../database/client.ts'
 import {
   plantRoleValues,
   userRoleValues,
   users,
 } from '../../database/schema.ts'
+import { DrizzleUserPlantsRepository } from '../../repositories/drizzle/drizzle-userPlants-repository.ts'
+import { DrizzleUsersRepository } from '../../repositories/drizzle/drizzle-users-repository.ts'
+import { GetProfileUseCase } from '../../use-cases/get-profile.ts'
 import { getAuthenticatedUser } from '../../utils/get-authenticate-user.ts'
 import { checkRequestJWT } from '../_hooks/check-request-jwt.ts'
 import { requireFullSession } from '../_hooks/requireFullSession.ts'
@@ -31,33 +35,34 @@ export const getProfileRoute: FastifyPluginAsyncZod = async (app) => {
               plantRole: z.enum(plantRoleValues),
             }),
           }),
+          409: z.object({
+            message: z.string(),
+          }),
         },
       },
     },
     async (request, reply) => {
       const result = getAuthenticatedUser(request)
 
-      const user = await db
-        .select({
-          id: users.id,
-          name: users.name,
-          email: users.email,
-          registration_number: users.registration_number,
-          role: users.role,
+      try {
+        const usersRepository = new DrizzleUsersRepository()
+        const userPlantsRepository = new DrizzleUserPlantsRepository()
+        const getProfileUseCase = new GetProfileUseCase(
+          usersRepository,
+          userPlantsRepository,
+        )
+
+        const user = await getProfileUseCase.execute({
+          userId: result.sub,
+          plantId: result.plantId ?? '',
         })
-        .from(users)
-        .where(eq(users.id, result.sub))
-
-      if (user.length === 0) {
-        throw new Error('User not found!')
+        return reply.status(200).send({ user })
+      } catch (err) {
+        if (err instanceof NotFoundError) {
+          return reply.status(409).send({ message: err.message })
+        }
+        throw err
       }
-
-      return reply.send({
-        user: {
-          ...user[0],
-          plantRole: result.plantRole ?? 'student',
-        },
-      })
     },
   )
 }
