@@ -28,6 +28,15 @@ export class DrizzleUsersRepository implements UsersRepository {
 
     return user
   }
+  async findById(id: string) {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, id))
+      .limit(1)
+
+    return user
+  }
   async findByRegistration(registration: string) {
     const [user] = await db
       .select()

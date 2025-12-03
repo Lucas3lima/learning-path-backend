@@ -1,8 +1,10 @@
-import { and, eq } from 'drizzle-orm'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod'
-import { db } from '../../database/client.ts'
-import { userPlants, users } from '../../database/schema.ts'
+import { InvalidCredentialsError } from '../../_erros/invalid-credentials-error.ts'
+import { PlantAccessDeniedError } from '../../_erros/plant-access-denied-error.ts'
+import { DrizzleUserPlantsRepository } from '../../repositories/drizzle/drizzle-userPlants-repository.ts'
+import { DrizzleUsersRepository } from '../../repositories/drizzle/drizzle-users-repository.ts'
+import { SelectPlantUseCase } from '../../use-cases/select-plants.ts'
 import { getAuthenticatedUser } from '../../utils/get-authenticate-user.ts'
 import { checkRequestJWT } from '../_hooks/check-request-jwt.ts'
 
@@ -34,51 +36,43 @@ export const selectPlantRoute: FastifyPluginAsyncZod = async (app) => {
       const { plantId } = request.body
       const result = getAuthenticatedUser(request)
 
-      const user = await db
-        .select()
-        .from(users)
-        .where(eq(users.id, result.sub))
-        .limit(1)
-
-      if (user.length === 0) {
-        return reply.status(400).send({ message: 'Credenciais inválidas.' })
-      }
-
-      const linkedPlants = await db
-        .select({
-          id: userPlants.plantId,
-          role: userPlants.role,
-        })
-        .from(userPlants)
-        .where(
-          and(
-            eq(userPlants.plantId, plantId),
-            eq(userPlants.userId, result.sub),
-          ),
+      try {
+        const usersRepository = new DrizzleUsersRepository()
+        const userPlantsRepository = new DrizzleUserPlantsRepository()
+        const sut = new SelectPlantUseCase(
+          usersRepository,
+          userPlantsRepository,
         )
 
-      if (linkedPlants.length === 0) {
-        return reply
-          .status(403)
-          .send({ message: 'Você não tem permissão para acessar esta planta.' })
-      }
+        const { user, linkedPlants } = await sut.execute({
+          plantId,
+          userId: result.sub,
+        })
 
-      if (linkedPlants.length === 1) {
         const token = await reply.jwtSign(
           {
             sub: result.sub,
-            role: user[0].role,
-            plantRole: linkedPlants[0].role,
-            plantId: linkedPlants[0].id,
+            role: user.role,
+            plantRole: linkedPlants.role,
+            plantId: linkedPlants.id,
           },
           {
             sign: {
-              expiresIn: '1d',
+              expiresIn: '2d',
             },
           },
         )
 
         return reply.status(201).send({ token })
+      } catch (err) {
+        if (err instanceof InvalidCredentialsError) {
+          return reply.status(400).send({ message: err.message })
+        }
+        if (err instanceof PlantAccessDeniedError) {
+          return reply.status(403).send({ message: err.message })
+        }
+
+        throw err
       }
     },
   )
