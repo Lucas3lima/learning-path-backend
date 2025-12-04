@@ -1,10 +1,10 @@
 import { compare } from 'bcryptjs'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { UserAlreadyExistsError } from '../../_erros/user-already-exists-error.ts'
-import { app } from '../../app.ts'
-import { InMemoryUsersRepository } from '../../repositories/in-memory/in-memory-user-repository.ts'
-import { InMemoryUsersPlantsRepository } from '../../repositories/in-memory/in-memory-userPlants-repository.ts'
-import { CreateAccountUseCase } from '../../use-cases/createAccount.ts'
+import { UserAlreadyExistsError } from '../_erros/user-already-exists-error.ts'
+import { app } from '../app.ts'
+import { InMemoryUsersRepository } from '../repositories/in-memory/in-memory-user-repository.ts'
+import { InMemoryUsersPlantsRepository } from '../repositories/in-memory/in-memory-userPlants-repository.ts'
+import { CreateAccountUseCase } from './createAccount.ts'
 
 let inMemoryUsersRepository: InMemoryUsersRepository
 let inMemoryUserPlantsRepository: InMemoryUsersPlantsRepository
