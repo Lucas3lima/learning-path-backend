@@ -33,7 +33,7 @@ export const createLessons: FastifyPluginAsyncZod = async (app) => {
         }),
         response: {
           201: z.object({
-            lessonId: z.string().uuid(),
+            lessonId: z.uuid(),
           }),
           400: z.object({ message: z.string() }),
           404: z.object({ message: z.string() }),
