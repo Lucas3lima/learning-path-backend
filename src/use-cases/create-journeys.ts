@@ -35,8 +35,6 @@ export class CreateJourneysUseCase {
     }
     const slug = createSlug(title)
 
-    console.log(`PlantId: ${plantId}`)
-
     const existingJourney = await this.journeysRepository.findBySlugAndPlant(
       slug,
       plantId,

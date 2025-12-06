@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+import { JourneysAlreadyExistsError } from '../_erros/journeys-already-exists-error.ts'
 import { InMemoryJourneysRepository } from '../repositories/in-memory/in-memory-journeys-repository.ts'
 import { InMemoryJourneySectorsRepository } from '../repositories/in-memory/in-memory-journeys-sectors-repository.ts'
 import { CreateJourneysUseCase } from './create-journeys.ts'
@@ -17,67 +18,45 @@ describe('Create Journeys Use Case', () => {
     )
   })
 
-  it('Should createa new journeys', async () => {
-
+  it('Should create a new journeys', async () => {
     const { journey } = await sut.execute({
       title: 'New Journey',
       description: 'Description...',
       level: 'Intermediate',
       sectorsIds: ['01'],
       responsibleId: 'resp-01',
-      plantId: 'plant-01'
+      plantId: 'plant-01',
     })
 
-    const sectorLinked = await inMemoryJourneySectorsRepository.findByJourneyIdAndSectorId(journey.id,'01')
+    const sectorLinked =
+      await inMemoryJourneySectorsRepository.findByJourneyIdAndSectorId(
+        journey.id,
+        '01',
+      )
 
     expect(journey.level).toEqual('Intermediate')
     expect(sectorLinked?.sectorId).toEqual('01')
   })
 
-  // it('Should not be able to register with same email twice', async () => {
-  //   await app.ready()
+  it('Should not be able to register with same slug twice', async () => {
+    await sut.execute({
+      title: 'New Journey',
+      description: 'Description...',
+      level: 'Intermediate',
+      sectorsIds: ['01'],
+      responsibleId: 'resp-01',
+      plantId: 'plant-01',
+    })
 
-  //   const email = 'teste@gmail.com'
-
-  //   await sut.execute({
-  //     name: 'test_name',
-  //     email,
-  //     password: '1234',
-  //     registration_number: '1',
-  //     plant_id: '6b87a20a-73b3-4fe5-a5c0-1ad2593ad024',
-  //   })
-
-  //   await expect(() =>
-  //     sut.execute({
-  //       name: 'test_name',
-  //       email,
-  //       password: '1234',
-  //       registration_number: '2',
-  //       plant_id: '6b87a20a-73b3-4fe5-a5c0-1ad2593ad024',
-  //     }),
-  //   ).rejects.toBeInstanceOf(UserAlreadyExistsError)
-  // })
-  // it('Should not be able to register with same registration_number twice', async () => {
-  //   await app.ready()
-
-  //   const registration_number = '1234'
-
-  //   await sut.execute({
-  //     name: 'test_name',
-  //     email: 'test@gmail.com',
-  //     password: '1234',
-  //     registration_number,
-  //     plant_id: '6b87a20a-73b3-4fe5-a5c0-1ad2593ad024',
-  //   })
-
-  //   await expect(() =>
-  //     sut.execute({
-  //       name: 'test_name',
-  //       email: 'test01@gmail.com',
-  //       password: '1234',
-  //       registration_number,
-  //       plant_id: '6b87a20a-73b3-4fe5-a5c0-1ad2593ad024',
-  //     }),
-  //   ).rejects.toBeInstanceOf(UserAlreadyExistsError)
-  // })
+    await expect(() =>
+      sut.execute({
+        title: 'New Journey',
+        description: 'Description...',
+        level: 'Intermediate',
+        sectorsIds: ['01'],
+        responsibleId: 'resp-01',
+        plantId: 'plant-01',
+      }),
+    ).rejects.toBeInstanceOf(JourneysAlreadyExistsError)
+  })
 })
