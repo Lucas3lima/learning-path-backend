@@ -2,9 +2,7 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod'
 import { JourneysAlreadyExistsError } from '../../_erros/journeys-already-exists-error.ts'
 import { PlantNotSelectedError } from '../../_erros/plant-not-selected-error.ts'
-import {
-  trainingLevelValues
-} from '../../database/schema.ts'
+import { trainingLevelValues } from '../../database/schema.ts'
 import { DrizzleJourneysRepository } from '../../repositories/drizzle/drizzle-journeys-repository.ts'
 import { DrizzleJourneySectorsRepository } from '../../repositories/drizzle/drizzle-journeys-sectors-repository.ts'
 import { CreateJourneysUseCase } from '../../use-cases/create-journeys.ts'

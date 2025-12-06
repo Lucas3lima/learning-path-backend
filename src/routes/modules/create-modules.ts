@@ -43,6 +43,9 @@ export const createModules: FastifyPluginAsyncZod = async (app) => {
       const { journeySlug } = request.params
       const user = getAuthenticatedUser(request)
 
+      try {
+      } catch (error) {}
+
       if (!user.plantId) {
         return reply.status(400).send({
           message: 'É necessário selecionar a planta.',

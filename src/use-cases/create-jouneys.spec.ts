@@ -38,7 +38,7 @@ describe('Create Journeys Use Case', () => {
     expect(sectorLinked?.sectorId).toEqual('01')
   })
 
-  it('Should not be able to register with same slug twice', async () => {
+  it('Should not be able to create journey with same slug twice', async () => {
     await sut.execute({
       title: 'New Journey',
       description: 'Description...',

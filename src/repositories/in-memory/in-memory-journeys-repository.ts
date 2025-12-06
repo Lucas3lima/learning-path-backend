@@ -1,8 +1,11 @@
-import type { CreateJourneyInput, Journey, JourneysRepository } from '../journeys-repository.ts'
+import type {
+  CreateJourneyInput,
+  Journey,
+  JourneysRepository,
+} from '../journeys-repository.ts'
 
 export class InMemoryJourneysRepository implements JourneysRepository {
   public items: Journey[] = []
-
 
   async findById(id: string) {
     const journey = this.items.find((item) => item.id === id)
@@ -14,7 +17,9 @@ export class InMemoryJourneysRepository implements JourneysRepository {
     return journey
   }
   async findBySlugAndPlant(slug: string, plantId: string) {
-    const journey = this.items.find((item) => item.slug === slug && item.plantId === plantId)
+    const journey = this.items.find(
+      (item) => item.slug === slug && item.plantId === plantId,
+    )
 
     if (!journey) {
       return null
@@ -23,7 +28,7 @@ export class InMemoryJourneysRepository implements JourneysRepository {
     return journey
   }
   async create(data: CreateJourneyInput) {
-     const journey = {
+    const journey = {
       id: data.id ?? crypto.randomUUID(),
       title: data.title,
       slug: data.slug,
@@ -41,6 +46,4 @@ export class InMemoryJourneysRepository implements JourneysRepository {
 
     return journey
   }
-
-  
 }

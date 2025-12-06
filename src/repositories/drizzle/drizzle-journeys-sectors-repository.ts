@@ -3,12 +3,19 @@ import { db } from '../../database/client.ts'
 import { journey_sectors } from '../../database/schema.ts'
 import type {
   CreateJourneySectoresInput,
-  JourneysSectorsRepository,
+  JourneysSectorsRepository
 } from '../journeys-sectors-repository.ts'
 
 export class DrizzleJourneySectorsRepository
   implements JourneysSectorsRepository
 {
+  async findAll(journeyId: string){
+    const JourneysSec = await db.select().from(journey_sectors).where(eq(
+      journey_sectors.journeyId,journeyId
+    ))
+
+    return JourneysSec
+  }
   async findByJourneyIdAndSectorId(journeyId: string, sectorId: string) {
     const [journeySec] = await db
       .select()

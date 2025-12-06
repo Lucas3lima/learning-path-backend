@@ -43,7 +43,7 @@ export class CreateJourneysUseCase {
     if (existingJourney) {
       throw new JourneysAlreadyExistsError()
     }
-    
+
     const journey = await this.journeysRepository.create({
       title,
       slug,

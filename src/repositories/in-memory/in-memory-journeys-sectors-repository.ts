@@ -1,10 +1,14 @@
-import type { CreateJourneySectoresInput, JourneySectors, JourneysSectorsRepository } from '../journeys-sectors-repository.ts'
+import type {
+  CreateJourneySectoresInput,
+  JourneySectors,
+  JourneysSectorsRepository,
+} from '../journeys-sectors-repository.ts'
 
 export class InMemoryJourneySectorsRepository
   implements JourneysSectorsRepository
 {
   public items: JourneySectors[] = []
-  
+
   async findAll(journeyId: string) {
     return this.items.filter((item) => item.journeyId === journeyId)
   }
