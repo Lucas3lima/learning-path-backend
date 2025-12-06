@@ -4,7 +4,7 @@ import { UserAlreadyExistsError } from '../_erros/user-already-exists-error.ts'
 import { app } from '../app.ts'
 import { InMemoryUsersRepository } from '../repositories/in-memory/in-memory-user-repository.ts'
 import { InMemoryUsersPlantsRepository } from '../repositories/in-memory/in-memory-userPlants-repository.ts'
-import { CreateAccountUseCase } from './createAccount.ts'
+import { CreateAccountUseCase } from './create-account.ts'
 
 let inMemoryUsersRepository: InMemoryUsersRepository
 let inMemoryUserPlantsRepository: InMemoryUsersPlantsRepository
@@ -49,7 +49,7 @@ describe('Create Account Use Case', () => {
       plant_id: '6b87a20a-73b3-4fe5-a5c0-1ad2593ad024',
     })
 
-    expect(() =>
+    await expect(() =>
       sut.execute({
         name: 'test_name',
         email,
@@ -72,7 +72,7 @@ describe('Create Account Use Case', () => {
       plant_id: '6b87a20a-73b3-4fe5-a5c0-1ad2593ad024',
     })
 
-    expect(() =>
+    await expect(() =>
       sut.execute({
         name: 'test_name',
         email: 'test01@gmail.com',

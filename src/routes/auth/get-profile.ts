@@ -1,10 +1,7 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod'
 import { NotFoundError } from '../../_erros/not-found-error.ts'
-import {
-  plantRoleValues,
-  userRoleValues,
-} from '../../database/schema.ts'
+import { plantRoleValues, userRoleValues } from '../../database/schema.ts'
 import { DrizzleUserPlantsRepository } from '../../repositories/drizzle/drizzle-userPlants-repository.ts'
 import { DrizzleUsersRepository } from '../../repositories/drizzle/drizzle-users-repository.ts'
 import { GetProfileUseCase } from '../../use-cases/get-profile.ts'

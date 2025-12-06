@@ -7,5 +7,4 @@ export type CreateCountryInput = InferInsertModel<typeof countries>
 export interface CountriesRepository {
   findById(id: string): Promise<Country | null>
   create(data: CreateCountryInput): Promise<Country>
-
 }

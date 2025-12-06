@@ -5,7 +5,7 @@ import { NotFoundError } from '../../_erros/not-found-error.ts'
 import { DrizzleUserPlantsRepository } from '../../repositories/drizzle/drizzle-userPlants-repository.ts'
 import { DrizzleUsersRepository } from '../../repositories/drizzle/drizzle-users-repository.ts'
 import { AuthenticateUseCase } from '../../use-cases/authenticate.ts'
-import { LinkedPlantsUseCase } from '../../use-cases/linkedPlants.ts'
+import { LinkedPlantsUseCase } from '../../use-cases/linked-plants.ts'
 
 export const authenticateRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(

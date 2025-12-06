@@ -34,7 +34,10 @@ export class GetProfileUseCase {
       throw new NotFoundError('Usuário não encontrado!')
     }
 
-    const plant = await this.userPlantsRepository.findByUserIdAndPlantId(userId,plantId)
+    const plant = await this.userPlantsRepository.findByUserIdAndPlantId(
+      userId,
+      plantId,
+    )
 
     if (!plant) {
       throw new NotFoundError('Planta não encontrada!')
@@ -46,7 +49,7 @@ export class GetProfileUseCase {
       email: user.email,
       registration_number: user.registration_number,
       role: user.role,
-      plantRole: plant.role
+      plantRole: plant.role,
     }
   }
 }

@@ -12,8 +12,9 @@ export interface LinkedPlant {
 
 export interface UserPlantsRepository {
   create(data: CreateUserPlantsInput): Promise<UserPlants>
-  findByUserIdAndPlantId(userId: string,plantId: string): Promise<UserPlants | null>
-  linkedPlants(userId:string): Promise<LinkedPlant[]>
-
-
+  findByUserIdAndPlantId(
+    userId: string,
+    plantId: string,
+  ): Promise<UserPlants | null>
+  linkedPlants(userId: string): Promise<LinkedPlant[]>
 }

@@ -4,7 +4,7 @@ import { UserAlreadyExistsError } from '../../_erros/user-already-exists-error.t
 import { userRoleValues } from '../../database/schema.ts'
 import { DrizzleUserPlantsRepository } from '../../repositories/drizzle/drizzle-userPlants-repository.ts'
 import { DrizzleUsersRepository } from '../../repositories/drizzle/drizzle-users-repository.ts'
-import { CreateAccountUseCase } from '../../use-cases/createAccount.ts'
+import { CreateAccountUseCase } from '../../use-cases/create-account.ts'
 export const createAccountRoute: FastifyPluginAsyncZod = async (app) => {
   app.post(
     '/users',

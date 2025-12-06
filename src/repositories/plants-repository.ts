@@ -7,5 +7,4 @@ export type CreatePlantInput = InferInsertModel<typeof plants>
 export interface PlantsRepository {
   findById(id: string): Promise<Plant | null>
   create(data: CreatePlantInput): Promise<Plant>
-
 }

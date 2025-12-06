@@ -17,7 +17,7 @@ export class DrizzleUsersRepository implements UsersRepository {
       })
       .from(users)
       .where(eq(users.id, userId))
-    return {user}
+    return { user }
   }
   async findByEmail(email: string) {
     const [user] = await db

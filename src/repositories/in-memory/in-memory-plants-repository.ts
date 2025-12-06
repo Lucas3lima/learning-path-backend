@@ -1,11 +1,14 @@
 import { createSlug } from '../../utils/create-slug.ts'
-import type { CreatePlantInput, Plant, PlantsRepository } from '../plants-repository.ts'
+import type {
+  CreatePlantInput,
+  Plant,
+  PlantsRepository,
+} from '../plants-repository.ts'
 
 export class InMemoryPlantsRepository implements PlantsRepository {
   public items: Plant[] = []
-  
-  async create(data: CreatePlantInput){
 
+  async create(data: CreatePlantInput) {
     const plant = {
       id: data.id ?? crypto.randomUUID(),
       name: data.name,
@@ -13,7 +16,7 @@ export class InMemoryPlantsRepository implements PlantsRepository {
       country_id: data.country_id,
       created_at: new Date(),
     }
-    
+
     this.items.push(plant)
 
     return plant
@@ -26,6 +29,4 @@ export class InMemoryPlantsRepository implements PlantsRepository {
 
     return plant
   }
-
- 
 }

@@ -90,7 +90,7 @@ export const journeys = pgTable(
   {
     id: uuid().primaryKey().defaultRandom(),
     title: text().notNull(),
-    slug: text().notNull().unique(),
+    slug: text().notNull(),
     description: text(),
     thumbnail_url: text(),
     level: trainingLevel().notNull().default('Beginner'),
@@ -150,7 +150,7 @@ export const lessons = pgTable(
   {
     id: uuid().primaryKey().defaultRandom(),
     title: text().notNull(),
-    slug: text().notNull().unique(),
+    slug: text().notNull(),
     order: integer().default(1),
     content: text(),
     video_url: text(),

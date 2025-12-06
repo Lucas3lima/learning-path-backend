@@ -1,5 +1,9 @@
 import { createSlug } from '../../utils/create-slug.ts'
-import type { CountriesRepository, Country, CreateCountryInput } from '../countries-repository.ts'
+import type {
+  CountriesRepository,
+  Country,
+  CreateCountryInput,
+} from '../countries-repository.ts'
 
 export class InMemoryCoutriesRepository implements CountriesRepository {
   public items: Country[] = []
@@ -11,7 +15,6 @@ export class InMemoryCoutriesRepository implements CountriesRepository {
       slug: createSlug(data.name),
       created_at: new Date(),
       updated_at: new Date(),
-      
     }
 
     this.items.push(country)

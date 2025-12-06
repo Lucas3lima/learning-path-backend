@@ -54,7 +54,7 @@ export const selectPlantRoute: FastifyPluginAsyncZod = async (app) => {
             sub: result.sub,
             role: user.role,
             plantRole: linkedPlants.role,
-            plantId: linkedPlants.id,
+            plantId: linkedPlants.plantId,
           },
           {
             sign: {

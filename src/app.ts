@@ -12,7 +12,7 @@ import {
   validatorCompiler,
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod'
-import  { ZodError } from 'zod'
+import { ZodError } from 'zod'
 import { config } from './config/env.ts'
 import { authenticateRoute } from './routes/auth/authenticate.ts'
 import { createAccountRoute } from './routes/auth/create-account.ts'
@@ -105,7 +105,6 @@ app.register(createModules)
 app.register(createLessons)
 
 app.setErrorHandler((error, request, reply) => {
-
   // 🔹 Se for erro de validação do Zod
   if (error instanceof ZodError) {
     return reply.status(400).send({
@@ -125,7 +124,7 @@ app.setErrorHandler((error, request, reply) => {
   // 🔹 Outros erros → 500
   console.error(error)
   return reply.status(500).send({
-    message: 'Internal server error.'
+    message: 'Internal server error.',
   })
 })
 

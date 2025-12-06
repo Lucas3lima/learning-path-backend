@@ -22,7 +22,7 @@ describe('Authenticate Use Case', () => {
       name: 'John Doe',
       email,
       registration_number: '12345',
-      password_hash: await hash(password, 6)
+      password_hash: await hash(password, 6),
     })
 
     const { user } = await sut.execute({
@@ -34,7 +34,6 @@ describe('Authenticate Use Case', () => {
   })
 
   it('Should not be able to authenticate with an invalid email', async () => {
-
     const email = 'john@test.com'
     const password = 'hash'
 
@@ -43,7 +42,7 @@ describe('Authenticate Use Case', () => {
       name: 'John Doe',
       email,
       registration_number: '12345',
-      password_hash: password
+      password_hash: password,
     })
 
     await expect(() =>
@@ -62,7 +61,7 @@ describe('Authenticate Use Case', () => {
       name: 'John Doe',
       email,
       registration_number: '12345',
-      password_hash: await hash(password, 6)
+      password_hash: await hash(password, 6),
     })
 
     await expect(() =>

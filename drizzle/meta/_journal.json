@@ -36,6 +36,13 @@
       "when": 1764036239780,
       "tag": "0004_blushing_bloodaxe",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1765043466900,
+      "tag": "0005_mushy_hawkeye",
+      "breakpoints": true
     }
   ]
 }

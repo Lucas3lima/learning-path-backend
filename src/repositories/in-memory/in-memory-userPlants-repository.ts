@@ -1,8 +1,8 @@
-import type { 
-  CreateUserPlantsInput, 
-  LinkedPlant, 
-  UserPlants, 
-  UserPlantsRepository 
+import type {
+  CreateUserPlantsInput,
+  LinkedPlant,
+  UserPlants,
+  UserPlantsRepository,
 } from '../userPlants-repository.ts'
 
 export class InMemoryUsersPlantsRepository implements UserPlantsRepository {
@@ -35,15 +35,11 @@ export class InMemoryUsersPlantsRepository implements UserPlantsRepository {
   }
 
   async linkedPlants(userId: string) {
-    const userPlants = this.items.filter(
-      (item) => item.userId === userId
-    )
+    const userPlants = this.items.filter((item) => item.userId === userId)
 
     const linked = userPlants
       .map((item) => {
-        const plant = this.plantsItems.find(
-          (p) => p.id === item.plantId
-        )
+        const plant = this.plantsItems.find((p) => p.id === item.plantId)
 
         if (!plant) return null
 

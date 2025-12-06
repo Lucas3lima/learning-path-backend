@@ -67,7 +67,6 @@ describe('Get profile Use Case', () => {
       role: 'user',
     })
 
-
     await expect(() =>
       sut.execute({
         userId: user.id,

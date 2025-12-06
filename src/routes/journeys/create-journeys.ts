@@ -1,14 +1,14 @@
-import { and, eq } from 'drizzle-orm'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod'
-import { db } from '../../database/client.ts'
+import { JourneysAlreadyExistsError } from '../../_erros/journeys-already-exists-error.ts'
+import { PlantNotSelectedError } from '../../_erros/plant-not-selected-error.ts'
 import {
-  journey_sectors,
-  journeys,
-  trainingLevelValues,
+  trainingLevelValues
 } from '../../database/schema.ts'
+import { DrizzleJourneysRepository } from '../../repositories/drizzle/drizzle-journeys-repository.ts'
+import { DrizzleJourneySectorsRepository } from '../../repositories/drizzle/drizzle-journeys-sectors-repository.ts'
+import { CreateJourneysUseCase } from '../../use-cases/create-journeys.ts'
 import { checkPlantRole } from '../../utils/check-plant-role.ts'
-import { createSlug } from '../../utils/create-slug.ts'
 import { getAuthenticatedUser } from '../../utils/get-authenticate-user.ts'
 import { checkRequestJWT } from '../_hooks/check-request-jwt.ts'
 import { requireFullSession } from '../_hooks/requireFullSession.ts'
@@ -37,6 +37,9 @@ export const createJourneys: FastifyPluginAsyncZod = async (app) => {
           400: z.object({
             message: z.string(),
           }),
+          409: z.object({
+            message: z.string(),
+          }),
         },
       },
     },
@@ -44,57 +47,35 @@ export const createJourneys: FastifyPluginAsyncZod = async (app) => {
       const { title, description, level, sectorsIds } = request.body
       const user = getAuthenticatedUser(request)
 
-      const slug = createSlug(title)
-      if (!user.plantId) {
-        return reply.status(400).send({
-          message: 'É necessário selecionar a planta.',
-        })
-      }
-      const existingJourney = await db
-        .select()
-        .from(journeys)
-        .where(and(eq(journeys.slug, slug), eq(journeys.plantId, user.plantId)))
+      try {
+        const journeysRepository = new DrizzleJourneysRepository()
+        const journeySectorRepository = new DrizzleJourneySectorsRepository()
+        const sut = new CreateJourneysUseCase(
+          journeysRepository,
+          journeySectorRepository,
+        )
 
-      if (existingJourney.length > 0) {
-        return reply.status(400).send({
-          message: 'Já existe uma jornada com esse nome para essa planta.',
-        })
-      }
-
-      const result = await db
-        .insert(journeys)
-        .values({
+        const { journey } = await sut.execute({
           title,
-          slug,
           description,
           level,
+          sectorsIds,
           responsibleId: user.sub,
           plantId: user.plantId,
         })
-        .returning()
 
-      await Promise.all(
-        sectorsIds.map(async (sectorId) => {
-          const exists = await db
-            .select()
-            .from(journey_sectors)
-            .where(
-              and(
-                eq(journey_sectors.journeyId, result[0].id),
-                eq(journey_sectors.sectorId, sectorId),
-              ),
-            )
+        reply.status(201).send({ journeyId: journey.id })
+      } catch (err) {
+        if (err instanceof PlantNotSelectedError) {
+          reply.status(400).send({ message: err.message })
+        }
 
-          if (exists.length === 0) {
-            await db.insert(journey_sectors).values({
-              journeyId: result[0].id,
-              sectorId,
-            })
-          }
-        }),
-      )
+        if (err instanceof JourneysAlreadyExistsError) {
+          reply.status(409).send({ message: err.message })
+        }
 
-      reply.status(201).send({ journeyId: result[0].id })
+        throw err
+      }
     },
   )
 }

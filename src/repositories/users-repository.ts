@@ -10,13 +10,12 @@ export interface UsersRepository {
   findByRegistration(registration: string): Promise<User | null>
   create(data: CreateUserInput): Promise<User>
   getProfile(userId: string): Promise<{
-  user: {
-    id: string
-    name: string | null
-    email: string
-    registration_number: string
-    role: 'user' | 'manager'
-  } | null
-}>
-
+    user: {
+      id: string
+      name: string | null
+      email: string
+      registration_number: string
+      role: 'user' | 'manager'
+    } | null
+  }>
 }
