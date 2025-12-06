@@ -1,10 +1,12 @@
-import { and, eq, sql } from 'drizzle-orm'
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod'
-import { db } from '../../database/client.ts'
-import { journeys, modules } from '../../database/schema.ts'
+import { ModulesAlreadyExistsError } from '../../_erros/modules-already-exists-error.ts'
+import { NotFoundError } from '../../_erros/not-found-error.ts'
+import { PlantNotSelectedError } from '../../_erros/plant-not-selected-error.ts'
+import { DrizzleJourneysRepository } from '../../repositories/drizzle/drizzle-journeys-repository.ts'
+import { DrizzleModulesRepository } from '../../repositories/drizzle/drizzle-modules-repository.ts'
+import { CreateModuleUseCase } from '../../use-cases/create-module.ts'
 import { checkPlantRole } from '../../utils/check-plant-role.ts'
-import { createSlug } from '../../utils/create-slug.ts'
 import { getAuthenticatedUser } from '../../utils/get-authenticate-user.ts'
 import { checkRequestJWT } from '../_hooks/check-request-jwt.ts'
 import { requireFullSession } from '../_hooks/requireFullSession.ts'
@@ -35,6 +37,12 @@ export const createModules: FastifyPluginAsyncZod = async (app) => {
           400: z.object({
             message: z.string(),
           }),
+          404: z.object({
+            message: z.string(),
+          }),
+          409: z.object({
+            message: z.string(),
+          }),
         },
       },
     },
@@ -44,63 +52,37 @@ export const createModules: FastifyPluginAsyncZod = async (app) => {
       const user = getAuthenticatedUser(request)
 
       try {
-      } catch (error) {}
-
-      if (!user.plantId) {
-        return reply.status(400).send({
-          message: 'É necessário selecionar a planta.',
-        })
-      }
-      const journey = await db
-        .select()
-        .from(journeys)
-        .where(
-          and(
-            eq(journeys.slug, journeySlug),
-            eq(journeys.plantId, user.plantId),
-          ),
+        const journeysRepository = new DrizzleJourneysRepository()
+        const modulesRepository = new DrizzleModulesRepository()
+        const sut = new CreateModuleUseCase(
+          journeysRepository,
+          modulesRepository,
         )
 
-      if (journey.length === 0) {
-        return reply.status(400).send({
-          message: 'Trilha não encontrada.',
-        })
-      }
-      const slug = createSlug(title)
-
-      const existingModules = await db
-        .select()
-        .from(modules)
-        .where(
-          and(eq(modules.slug, slug), eq(modules.journeyId, journey[0].id)),
-        )
-
-      if (existingModules.length > 0) {
-        return reply.status(400).send({
-          message: 'Já existe um módulo com esse nome nessa trilha.',
-        })
-      }
-
-      const [{ nextOrder }] = await db
-        .select({
-          nextOrder: sql<number>`COALESCE(MAX(${modules.order}) + 1, 1)`,
-        })
-        .from(modules)
-        .where(eq(modules.journeyId, journey[0].id))
-
-      const result = await db
-        .insert(modules)
-        .values({
+        const { module } = await sut.execute({
           title,
-          slug,
           description,
           hour,
-          order: nextOrder,
-          journeyId: journey[0].id,
+          journeySlug,
+          plantId: user.plantId,
         })
-        .returning()
 
-      reply.status(201).send({ moduleId: result[0].id })
+        reply.status(201).send({ moduleId: module.id })
+      } catch (err) {
+        if (err instanceof PlantNotSelectedError) {
+          reply.status(400).send({ message: err.message })
+        }
+
+        if (err instanceof ModulesAlreadyExistsError) {
+          reply.status(409).send({ message: err.message })
+        }
+
+        if (err instanceof NotFoundError) {
+          reply.status(404).send({ message: err.message })
+        }
+
+        throw err
+      }
     },
   )
 }

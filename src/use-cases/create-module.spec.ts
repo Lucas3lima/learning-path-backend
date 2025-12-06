@@ -86,83 +86,81 @@ describe('Create modules Use Case', () => {
   })
 
   it('Should increment order automatically', async () => {
-  await inMemoryJourneysRepository.create({
-    id: '01',
-    title: 'Journey',
-    slug: 'journey',
-    plantId: 'plant-01',
-    description: '...',
-    level: 'Intermediate',
-    responsibleId: 'resp',
+    await inMemoryJourneysRepository.create({
+      id: '01',
+      title: 'Journey',
+      slug: 'journey',
+      plantId: 'plant-01',
+      description: '...',
+      level: 'Intermediate',
+      responsibleId: 'resp',
+    })
+
+    await sut.execute({
+      title: 'Module 1',
+      hour: 1,
+      description: '...',
+      journeySlug: 'journey',
+      plantId: 'plant-01',
+    })
+
+    const { module } = await sut.execute({
+      title: 'Module 2',
+      hour: 1,
+      description: '...',
+      journeySlug: 'journey',
+      plantId: 'plant-01',
+    })
+
+    expect(module.order).toEqual(2)
   })
 
-  await sut.execute({
-    title: 'Module 1',
-    hour: 1,
-    description: '...',
-    journeySlug: 'journey',
-    plantId: 'plant-01',
+  it('Should allow creating modules with the same title in different journeys', async () => {
+    await inMemoryJourneysRepository.create({
+      id: '01',
+      title: 'Journey One',
+      slug: 'journey_one',
+      description: '...',
+      level: 'Intermediate',
+      responsibleId: 'resp-01',
+      plantId: 'plant-01',
+    })
+
+    await inMemoryJourneysRepository.create({
+      id: '02',
+      title: 'Journey Two',
+      slug: 'journey_two',
+      description: '...',
+      level: 'Advanced',
+      responsibleId: 'resp-01',
+      plantId: 'plant-01',
+    })
+
+    // Create module in journey 1
+    const { module: module1 } = await sut.execute({
+      title: 'Repeated Module',
+      description: 'First...',
+      hour: 1,
+      journeySlug: 'journey_one',
+      plantId: 'plant-01',
+    })
+
+    // Create same title module in journey 2
+    const { module: module2 } = await sut.execute({
+      title: 'Repeated Module',
+      description: 'Second...',
+      hour: 2,
+      journeySlug: 'journey_two',
+      plantId: 'plant-01',
+    })
+
+    expect(module1.slug).toEqual('repeated-module')
+    expect(module2.slug).toEqual('repeated-module')
+
+    expect(module1.journeyId).toBe('01')
+    expect(module2.journeyId).toBe('02')
+
+    // They MUST be allowed (no error thrown)
+    expect(module1.id).not.toBe(module2.id)
   })
-
-  const { module } = await sut.execute({
-    title: 'Module 2',
-    hour: 1,
-    description: '...',
-    journeySlug: 'journey',
-    plantId: 'plant-01',
-  })
-
-  expect(module.order).toEqual(2)
-})
-
-it('Should allow creating modules with the same title in different journeys', async () => {
-  await inMemoryJourneysRepository.create({
-    id: '01',
-    title: 'Journey One',
-    slug: 'journey_one',
-    description: '...',
-    level: 'Intermediate',
-    responsibleId: 'resp-01',
-    plantId: 'plant-01',
-  })
-
-  await inMemoryJourneysRepository.create({
-    id: '02',
-    title: 'Journey Two',
-    slug: 'journey_two',
-    description: '...',
-    level: 'Advanced',
-    responsibleId: 'resp-01',
-    plantId: 'plant-01',
-  })
-
-  // Create module in journey 1
-  const { module: module1 } = await sut.execute({
-    title: 'Repeated Module',
-    description: 'First...',
-    hour: 1,
-    journeySlug: 'journey_one',
-    plantId: 'plant-01',
-  })
-
-  // Create same title module in journey 2
-  const { module: module2 } = await sut.execute({
-    title: 'Repeated Module',
-    description: 'Second...',
-    hour: 2,
-    journeySlug: 'journey_two',
-    plantId: 'plant-01',
-  })
-
-  expect(module1.slug).toEqual('repeated-module')
-  expect(module2.slug).toEqual('repeated-module')
-
-  expect(module1.journeyId).toBe('01')
-  expect(module2.journeyId).toBe('02')
-
-  // They MUST be allowed (no error thrown)
-  expect(module1.id).not.toBe(module2.id)
-})
-
-
 })

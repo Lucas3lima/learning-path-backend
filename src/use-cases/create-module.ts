@@ -10,7 +10,7 @@ interface CreateModulesUseCaseRequest {
   description?: string
   hour: number
   journeySlug: string
-  plantId: string
+  plantId?: string
 }
 export class CreateModuleUseCase {
   private journeysRepository: JourneysRepository

@@ -46,7 +46,7 @@ export class InMemoryModulesRepository implements ModulesRepository {
     return module
   }
 
-  async nextOrder(journeyId: string): Promise<number> {
+  async nextOrder(journeyId: string) {
     const modules = this.items.filter((item) => item.journeyId === journeyId)
 
     if (modules.length === 0) {
