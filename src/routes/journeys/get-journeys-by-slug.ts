@@ -4,6 +4,7 @@ import { NotFoundError } from '../../_erros/not-found-error.ts'
 import { PlantNotSelectedError } from '../../_erros/plant-not-selected-error.ts'
 import { DrizzleJourneysRepository } from '../../repositories/drizzle/drizzle-journeys-repository.ts'
 import { DrizzleJourneySectorsRepository } from '../../repositories/drizzle/drizzle-journeys-sectors-repository.ts'
+import { DrizzleLessonsRepository } from '../../repositories/drizzle/drizzle-lessons-repository.ts'
 import { DrizzleModulesRepository } from '../../repositories/drizzle/drizzle-modules-repository.ts'
 import { DrizzleUsersRepository } from '../../repositories/drizzle/drizzle-users-repository.ts'
 import { GetJourneyOverviewUseCase } from '../../use-cases/get-journey-overview.ts'
@@ -53,6 +54,7 @@ export const getJourneyOverviewRoute: FastifyPluginAsyncZod = async (app) => {
                 slug: z.string(),
                 hour: z.number(),
                 description: z.string().nullable(),
+                totalLessons: z.number()
               }),
             ),
 
@@ -77,11 +79,13 @@ export const getJourneyOverviewRoute: FastifyPluginAsyncZod = async (app) => {
         const journeysRepository = new DrizzleJourneysRepository()
         const modulesRepository = new DrizzleModulesRepository()
         const journeysSectorsRepository = new DrizzleJourneySectorsRepository()
+        const lessonsRepository = new DrizzleLessonsRepository()
         const sut = new GetJourneyOverviewUseCase(
           usersRepository,
           journeysRepository,
           modulesRepository,
           journeysSectorsRepository,
+          lessonsRepository,
         )
 
         const journey_overview = await sut.execute({

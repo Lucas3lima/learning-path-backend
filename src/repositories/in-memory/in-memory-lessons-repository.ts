@@ -16,6 +16,10 @@ export class InMemoryLessonsRepository implements LessonsRepository {
 
     return lesson
   }
+  async findByModuleId(moduleId: string) {
+    return this.items.filter((item) => item.moduleId === moduleId)
+  }
+
   async findBySlugAndModuleId(slug: string, moduleId: string) {
     const lesson = this.items.find(
       (item) => item.slug === slug && item.moduleId === moduleId,

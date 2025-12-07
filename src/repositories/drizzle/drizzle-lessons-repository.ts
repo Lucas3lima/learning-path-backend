@@ -16,6 +16,10 @@ export class DrizzleLessonsRepository implements LessonsRepository {
 
     return lesson
   }
+  async findByModuleId(moduleId: string) {
+    return await db.select().from(lessons).where(eq(lessons.moduleId, moduleId))
+  }
+
   async findBySlugAndModuleId(slug: string, moduleId: string) {
     const [lesson] = await db
       .select()
