@@ -6,6 +6,7 @@ export type CreateJourneyInput = InferInsertModel<typeof journeys>
 
 export interface JourneysRepository {
   findById(id: string): Promise<Journey | null>
+  findByPlantId(plantId: string): Promise<Journey[]>
   findBySlugAndPlant(slug: string, plantId: string): Promise<Journey | null>
   create(data: CreateJourneyInput): Promise<Journey>
 }

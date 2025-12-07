@@ -13,4 +13,5 @@ export interface JourneysSectorsRepository {
   ): Promise<JourneySectors | null>
   findAll(journeyId: string): Promise<JourneySectors[]>
   create(data: CreateJourneySectoresInput): Promise<CreateJourneySectoresInput>
+  findAllJourneyId(journeyId: string): Promise<{id:string, name:string}[]>
 }

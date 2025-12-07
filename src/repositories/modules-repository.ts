@@ -12,4 +12,14 @@ export interface ModulesRepository {
   ): Promise<Modules | null>
   create(data: CreateModuleInput): Promise<Modules>
   nextOrder(journeyId: string): Promise<number>
+  findByJourneyId(journeyId: string): Promise<
+    {
+      id: string
+      title: string
+      slug: string
+      order: number
+      hour: number
+      description: string | null
+    }[]
+  >
 }

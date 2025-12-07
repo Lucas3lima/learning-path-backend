@@ -19,6 +19,14 @@ export class DrizzleJourneysRepository implements JourneysRepository {
 
     return journey
   }
+  async findByPlantId(plantId: string) {
+    const journey = await db
+      .select()
+      .from(journeys)
+      .where(eq(journeys.plantId, plantId))
+
+    return journey
+  }
   async findBySlugAndPlant(slug: string, plantId: string) {
     const [journey] = await db
       .select()
