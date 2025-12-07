@@ -1,4 +1,8 @@
-import type { CreateLessonsInput, Lessons, LessonsRepository } from '../lessons-repository.ts'
+import type {
+  CreateLessonsInput,
+  Lessons,
+  LessonsRepository,
+} from '../lessons-repository.ts'
 
 export class InMemoryLessonsRepository implements LessonsRepository {
   public items: Lessons[] = []
@@ -33,7 +37,7 @@ export class InMemoryLessonsRepository implements LessonsRepository {
       pdf_url: data.pdf_url ?? null,
       video_url: data.video_url ?? null,
       content: data.content ?? null,
-    
+
       created_at: new Date(),
       updated_at: new Date(),
     }
