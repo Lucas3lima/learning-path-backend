@@ -6,6 +6,12 @@ import type {
 
 export class InMemoryJourneysRepository implements JourneysRepository {
   public items: Journey[] = []
+  
+  async findByPlantId(plantId: string): Promise<Journey[]> {
+    const journeys = this.items.filter((item) => item.plantId === plantId)
+
+    return journeys
+  }
 
   async findById(id: string) {
     const journey = this.items.find((item) => item.id === id)

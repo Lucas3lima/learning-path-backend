@@ -6,6 +6,18 @@ import type {
 
 export class InMemoryModulesRepository implements ModulesRepository {
   public items: Modules[] = []
+  async findByJourneyId(journeyId: string) {
+    return this.items
+    .filter((item) => item.journeyId === journeyId)
+    .map((item) => ({
+      id: item.id,
+      title: item.title,
+      slug: item.slug,
+      order: item.order,
+      hour: item.hour,
+      description: item.description ?? null,
+    }))
+  }
 
   async findById(id: string) {
     const module = this.items.find((item) => item.id === id)

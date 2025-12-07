@@ -11,13 +11,13 @@ export class DrizzleJourneySectorsRepository
 {
   async findAllJourneyId(journeyId: string){
     return await db
-                .select({
-                  id: sectors.id,
-                  name: sectors.name,
-                })
-                .from(journey_sectors)
-                .innerJoin(sectors, eq(sectors.id, journey_sectors.sectorId))
-                .where(eq(journey_sectors.journeyId, journeyId))
+      .select({
+        id: sectors.id,
+        name: sectors.name,
+      })
+      .from(journey_sectors)
+      .innerJoin(sectors, eq(sectors.id, journey_sectors.sectorId))
+      .where(eq(journey_sectors.journeyId, journeyId))
   }
   async findAll(journeyId: string) {
     const JourneysSec = await db

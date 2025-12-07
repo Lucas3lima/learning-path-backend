@@ -71,7 +71,6 @@ export const getAllJourneysRoute: FastifyPluginAsyncZod = async (app) => {
         )
         const journeysResponse = await sut.execute({
           plantId: user.plantId,
-          userId: user.sub,
         })
         return reply.status(200).send(journeysResponse)
       } catch (err) {

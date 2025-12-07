@@ -5,7 +5,6 @@ import type { ModulesRepository } from '../repositories/modules-repository.ts'
 import type { UsersRepository } from '../repositories/users-repository.ts'
 
 interface GetAllJourneysUseCaseRequest {
-  userId: string
   plantId?: string
 }
 interface GetAllJourneysUseCaseReponse {
@@ -43,7 +42,6 @@ export class GetAllJourneysUseCase {
     this.journeysSectorsRepository = journeysSectorsRepository
   }
   async execute({
-    userId,
     plantId,
   }: GetAllJourneysUseCaseRequest): Promise<GetAllJourneysUseCaseReponse[]> {
     if (!plantId) {
@@ -55,7 +53,7 @@ export class GetAllJourneysUseCase {
     if (journeysResult.length > 0) {
         const journeysResponse = await Promise.all(
             journeysResult.map(async (journey) => {
-              const responsible = await this.usersRepository.findById(userId)
+              const responsible = await this.usersRepository.findById(journey.responsibleId)
       
               const journeyModules = await this.modulesRepository.findByJourneyId(
                 journey.id,
