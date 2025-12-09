@@ -99,7 +99,7 @@ export class CreateLessonsUseCase {
         throw new InvalidFileTypeError()
       }
 
-      const folder = `${plantId}/${journeySlug}/${moduleSlug}`
+      const folder = `${existingPlant.slug}/${journeySlug}/${moduleSlug}`
 
       pdf_url = await this.storageProvider.saveFile(
         file.stream,

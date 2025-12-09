@@ -54,7 +54,7 @@ export const getJourneyOverviewRoute: FastifyPluginAsyncZod = async (app) => {
                 slug: z.string(),
                 hour: z.number(),
                 description: z.string().nullable(),
-                totalLessons: z.number()
+                totalLessons: z.number(),
               }),
             ),
 

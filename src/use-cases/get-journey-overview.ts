@@ -69,19 +69,27 @@ export class GetJourneyOverviewUseCase {
     }
 
     // 1️⃣ Buscar a journey pelo slug e plantId
-    const journey = await this.journeysRepository.findBySlugAndPlant(slug, plantId)
+    const journey = await this.journeysRepository.findBySlugAndPlant(
+      slug,
+      plantId,
+    )
     if (!journey) {
       throw new NotFoundError('Trilha não encontrada.')
     }
 
     // 2️⃣ Buscar responsável
-    const responsible = await this.usersRepository.findById(journey.responsibleId)
+    const responsible = await this.usersRepository.findById(
+      journey.responsibleId,
+    )
 
     // 3️⃣ Buscar módulos ordenados
-    const journeyModules = await this.modulesRepository.findByJourneyId(journey.id)
+    const journeyModules = await this.modulesRepository.findByJourneyId(
+      journey.id,
+    )
 
     // 4️⃣ Buscar setores vinculados
-    const journeySectorsResult = await this.journeysSectorsRepository.findAllJourneyId(journey.id)
+    const journeySectorsResult =
+      await this.journeysSectorsRepository.findAllJourneyId(journey.id)
 
     // 5️⃣ Enriquecer cada módulo com número de lessons e soma de horas das lessons
     const modules = await Promise.all(
@@ -99,7 +107,7 @@ export class GetJourneyOverviewUseCase {
           description: m.description,
           totalLessons,
         }
-      })
+      }),
     )
 
     // 6️⃣ Calcular métricas do journey

@@ -3,6 +3,8 @@ import { db } from '../../database/client.ts'
 import { journeys } from '../../database/schema.ts'
 import type {
   CreateJourneyInput,
+  EditJourneyInput,
+  Journey,
   JourneysRepository,
 } from '../journeys-repository.ts'
 
@@ -43,5 +45,22 @@ export class DrizzleJourneysRepository implements JourneysRepository {
     const [journey] = await db.insert(journeys).values(data).returning()
 
     return journey
+  }
+
+  async edit(data: EditJourneyInput) {
+    const { id, plantId, ...fields } = data
+
+    const [updated] = await db
+      .update(journeys)
+      .set(fields)
+      .where(
+        and(
+          eq(journeys.id, id),
+          eq(journeys.plantId, plantId)
+        )
+      )
+      .returning()
+
+    return updated ?? null
   }
 }

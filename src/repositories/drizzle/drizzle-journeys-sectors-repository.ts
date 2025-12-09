@@ -9,7 +9,7 @@ import type {
 export class DrizzleJourneySectorsRepository
   implements JourneysSectorsRepository
 {
-  async findAllJourneyId(journeyId: string){
+  async findAllJourneyId(journeyId: string) {
     return await db
       .select({
         id: sectors.id,

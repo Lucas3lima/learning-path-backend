@@ -9,7 +9,9 @@ export class InMemoryJourneySectorsRepository
 {
   public items: JourneySectors[] = []
   public sectors: { id: string; name: string }[] = []
-   async findAllJourneyId(journeyId: string): Promise<{ id: string; name: string }[]> {
+  async findAllJourneyId(
+    journeyId: string,
+  ): Promise<{ id: string; name: string }[]> {
     // pega os pivots desse journey
     const pivots = this.items.filter((item) => item.journeyId === journeyId)
 
@@ -17,8 +19,8 @@ export class InMemoryJourneySectorsRepository
     return pivots.map((item) => {
       const sector = this.sectors.find((s) => s.id === item.sectorId)
       return {
-        id: sector?.id ?? '',        // caso não encontre
-        name: sector?.name ?? '',    // garante string
+        id: sector?.id ?? '', // caso não encontre
+        name: sector?.name ?? '', // garante string
       }
     })
   }

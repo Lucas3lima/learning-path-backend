@@ -22,91 +22,88 @@ describe('Get all journeys Use Case', () => {
       inMemoryUsersRepository,
       inMemoryJourneysRepository,
       inMemoryModulesRepository,
-      inMemoryjourneysSectorsRepository
+      inMemoryjourneysSectorsRepository,
     )
 
     await inMemoryUsersRepository.create({
       id: '01',
       name: 'user test',
-      email:'test@test.com',
+      email: 'test@test.com',
       password_hash: 'password_hash',
       registration_number: '2469',
-      role: 'manager'
+      role: 'manager',
     })
   })
 
   it('Get all journeys', async () => {
+    await inMemoryJourneysRepository.create({
+      id: '01',
+      title: 'Test 01',
+      slug: 'test_01',
+      plantId: '01',
+      responsibleId: '01',
+      level: 'Advanced',
+      description: 'description',
+    })
 
-  await inMemoryJourneysRepository.create({
-    id: '01',
-    title: 'Test 01',
-    slug: 'test_01',
-    plantId: '01',
-    responsibleId: '01',
-    level:'Advanced',
-    description:'description'
-  })
+    await inMemoryJourneysRepository.create({
+      id: '02',
+      title: 'Test 02',
+      slug: 'test_02',
+      plantId: '01',
+      responsibleId: '01',
+      level: 'Intermediate',
+      description: 'description',
+    })
 
-  await inMemoryJourneysRepository.create({
-    id: '02',
-    title: 'Test 02',
-    slug: 'test_02',
-    plantId: '01',
-    responsibleId: '01',
-    level:'Intermediate',
-    description:'description'
-  })
+    await inMemoryModulesRepository.create({
+      title: 'module',
+      slug: 'module',
+      journeyId: '01',
+      hour: 2,
+    })
+    await inMemoryModulesRepository.create({
+      title: 'module 02',
+      slug: 'module_02',
+      journeyId: '01',
+      hour: 4,
+    })
 
-  await inMemoryModulesRepository.create({
-    title: 'module',
-    slug: 'module',
-    journeyId: '01',
-    hour: 2
-  })
-  await inMemoryModulesRepository.create({
-    title: 'module 02',
-    slug: 'module_02',
-    journeyId: '01',
-    hour: 4
-  })
+    const response = await sut.execute({
+      plantId: '01',
+    })
 
-  const response = await sut.execute({
-    plantId: '01',
-  })
-
-  console.log(response)
-  expect(response).toEqual(
-    expect.arrayContaining([
-      expect.objectContaining({
-        id: '01',
-        title: 'Test 01',
-        description: 'description',
-        level: 'Advanced',
-        totalHours: 6,
-        totalModules: 2,
-        responsible: expect.objectContaining({
+    expect(response).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
           id: '01',
-          name: expect.any(String),
-          email: expect.any(String)
+          title: 'Test 01',
+          description: 'description',
+          level: 'Advanced',
+          totalHours: 6,
+          totalModules: 2,
+          responsible: expect.objectContaining({
+            id: '01',
+            name: expect.any(String),
+            email: expect.any(String),
+          }),
+          sectors: expect.any(Array),
         }),
-        sectors: expect.any(Array)
-      }),
-      expect.objectContaining({
-        id: '02',
-        title: 'Test 02',
-        description: 'description',
-        level: 'Intermediate',
-        totalHours: 0,
-        totalModules: 0,
-        responsible: expect.objectContaining({
-          id: '01',
-          name: expect.any(String),
-          email: expect.any(String)
+        expect.objectContaining({
+          id: '02',
+          title: 'Test 02',
+          description: 'description',
+          level: 'Intermediate',
+          totalHours: 0,
+          totalModules: 0,
+          responsible: expect.objectContaining({
+            id: '01',
+            name: expect.any(String),
+            email: expect.any(String),
+          }),
+          sectors: expect.any(Array),
         }),
-        sectors: expect.any(Array)
-      })
-    ])
-  )
-})
-
+      ]),
+    )
+  })
 })

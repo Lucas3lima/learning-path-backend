@@ -51,46 +51,47 @@ export class GetAllJourneysUseCase {
     const journeysResult = await this.journeysRepository.findByPlantId(plantId)
 
     if (journeysResult.length > 0) {
-        const journeysResponse = await Promise.all(
-            journeysResult.map(async (journey) => {
-              const responsible = await this.usersRepository.findById(journey.responsibleId)
-      
-              const journeyModules = await this.modulesRepository.findByJourneyId(
-                journey.id,
-              )
-      
-              const journeySectorsResult = await this.journeysSectorsRepository.findAllJourneyId(journey.id)
-      
-              const totalHours = journeyModules.reduce((acc, m) => acc + m.hour, 0)
-              const totalModules = journeyModules.length
-      
-              return {
-                  id: journey.id,
-                  title: journey.title,
-                  description: journey.description,
-                  level: journey.level,
-                  thumbnail_url: journey.thumbnail_url,
-      
-                  responsible: {
-                      id: responsible?.id ?? '',
-                      name: responsible?.name ?? null,
-                      email: responsible?.email ?? '',
-                  },
-      
-                  sectors: journeySectorsResult.map((s) => ({
-                    id: s.id,
-                    name: s.name,
-                  })),
-      
-                  totalHours,
-                  totalModules,
-                }
-            })
-        )
-        return journeysResponse
+      const journeysResponse = await Promise.all(
+        journeysResult.map(async (journey) => {
+          const responsible = await this.usersRepository.findById(
+            journey.responsibleId,
+          )
+
+          const journeyModules = await this.modulesRepository.findByJourneyId(
+            journey.id,
+          )
+
+          const journeySectorsResult =
+            await this.journeysSectorsRepository.findAllJourneyId(journey.id)
+
+          const totalHours = journeyModules.reduce((acc, m) => acc + m.hour, 0)
+          const totalModules = journeyModules.length
+
+          return {
+            id: journey.id,
+            title: journey.title,
+            description: journey.description,
+            level: journey.level,
+            thumbnail_url: journey.thumbnail_url,
+
+            responsible: {
+              id: responsible?.id ?? '',
+              name: responsible?.name ?? null,
+              email: responsible?.email ?? '',
+            },
+
+            sectors: journeySectorsResult.map((s) => ({
+              id: s.id,
+              name: s.name,
+            })),
+
+            totalHours,
+            totalModules,
+          }
+        }),
+      )
+      return journeysResponse
     }
     return []
-
-    
   }
 }
