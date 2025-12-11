@@ -63,4 +63,19 @@ export class DrizzleJourneysRepository implements JourneysRepository {
 
     return updated ?? null
   }
+
+  async delete(id: string, plantId: string) {
+    const result = await db
+      .delete(journeys)
+      .where(
+        and(
+          eq(journeys.id, id),
+          eq(journeys.plantId, plantId)
+        )
+      )
+      .returning({ id: journeys.id })
+
+    // Se deletou, result[0] existe
+    return result.length > 0
+  }
 }

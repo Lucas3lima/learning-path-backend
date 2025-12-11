@@ -4,7 +4,7 @@ import { PlantNotSelectedError } from '../_erros/plant-not-selected-error.ts'
 import type { JourneysRepository } from '../repositories/journeys-repository.ts'
 import { createSlug } from '../utils/create-slug.ts'
 
-interface CreateLessonsUseCaseRequest {
+interface EditJourneysUseCaseRequest {
   id: string
   plantId?: string
   title?: string
@@ -25,7 +25,7 @@ export class EditJourneysUseCase {
     level,
     plantId,
     thumbnail_url,
-  }: CreateLessonsUseCaseRequest) {
+  }: EditJourneysUseCaseRequest) {
     if (!plantId) {
       throw new PlantNotSelectedError()
     }

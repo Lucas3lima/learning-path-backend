@@ -19,6 +19,8 @@ import { createAccountRoute } from './routes/auth/create-account.ts'
 import { getProfileRoute } from './routes/auth/get-profile.ts'
 import { selectPlantRoute } from './routes/auth/select-plant.ts'
 import { createJourneys } from './routes/journeys/create-journeys.ts'
+import { deleteJourneys } from './routes/journeys/delete-journeys.ts'
+import { editJourneys } from './routes/journeys/edit-journeys.ts'
 import { getAllJourneysRoute } from './routes/journeys/get-all-journeys.ts'
 import { getJourneyOverviewRoute } from './routes/journeys/get-journeys-by-slug.ts'
 import { createLessons } from './routes/lessons/create-lessons.ts'
@@ -97,6 +99,8 @@ app.register(selectPlantRoute)
 app.register(createJourneys)
 app.register(getJourneyOverviewRoute)
 app.register(getAllJourneysRoute)
+app.register(editJourneys)
+app.register(deleteJourneys)
 
 // MODULES
 app.register(createModules)
