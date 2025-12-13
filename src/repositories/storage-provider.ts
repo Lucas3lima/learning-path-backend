@@ -5,5 +5,12 @@ export interface StorageProvider {
     folder: string,
   ): Promise<string>
 
-  deleteFile?(filePath: string): Promise<void>
+  deleteFile(filePath: string): Promise<void>
+
+  replaceFile(
+    oldFilePath: string,
+    file: AsyncIterable<Uint8Array> | NodeJS.ReadableStream,
+    filename: string,
+    folder: string,
+  ): Promise<string>
 }

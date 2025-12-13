@@ -32,12 +32,12 @@ export class InMemoryLessonsRepository implements LessonsRepository {
     return lesson
   }
   async create(data: CreateLessonsInput) {
-    const module = {
+    const lesson = {
       id: data.id ?? crypto.randomUUID(),
       title: data.title,
       slug: data.slug,
       moduleId: data.moduleId,
-      order: data.order ?? 1,
+      order: data.order ?? await this.nextOrder(data.moduleId),
       pdf_url: data.pdf_url ?? null,
       video_url: data.video_url ?? null,
       content: data.content ?? null,
@@ -46,9 +46,9 @@ export class InMemoryLessonsRepository implements LessonsRepository {
       updated_at: new Date(),
     }
 
-    this.items.push(module)
+    this.items.push(lesson)
 
-    return module
+    return lesson
   }
 
   async nextOrder(moduleId: string) {

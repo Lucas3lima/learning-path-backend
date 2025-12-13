@@ -13,8 +13,6 @@ export class DiskStorageProvider implements StorageProvider {
     // Ex.: folder = "plantSlug/journeySlug/moduleSlug"
     const uploadDir = path.resolve('uploads', folder)
 
-    console.log('passou')
-
     fs.mkdirSync(uploadDir, { recursive: true })
 
     const finalName = `${randomUUID()}-${filename}`
@@ -31,10 +29,21 @@ export class DiskStorageProvider implements StorageProvider {
   }
 
   async deleteFile(filePath: string): Promise<void> {
-    const absolutePath = path.resolve(filePath)
+    const absolutePath = path.resolve('',filePath)
 
     if (fs.existsSync(absolutePath)) {
       fs.unlinkSync(absolutePath)
     }
+  }
+
+  async replaceFile(
+    oldFilePath: string, 
+    file: AsyncIterable<Uint8Array> | NodeJS.ReadableStream, 
+    filename: string, 
+    folder: string) {
+
+      await this.deleteFile(oldFilePath)
+
+      return this.saveFile(file, filename, folder)
   }
 }
