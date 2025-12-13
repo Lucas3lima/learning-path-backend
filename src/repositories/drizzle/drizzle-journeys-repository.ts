@@ -4,8 +4,7 @@ import { journeys } from '../../database/schema.ts'
 import type {
   CreateJourneyInput,
   EditJourneyInput,
-  Journey,
-  JourneysRepository,
+  JourneysRepository
 } from '../journeys-repository.ts'
 
 export class DrizzleJourneysRepository implements JourneysRepository {

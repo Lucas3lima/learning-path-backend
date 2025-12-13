@@ -3,6 +3,7 @@ import { db } from '../../database/client.ts'
 import { modules } from '../../database/schema.ts'
 import type {
   CreateModuleInput,
+  EditModuleInput,
   ModulesRepository,
 } from '../modules-repository.ts'
 
@@ -57,4 +58,21 @@ export class DrizzleModulesRepository implements ModulesRepository {
       .where(eq(modules.journeyId, journeyId))
     return nextOrder
   }
+
+  async edit(data: EditModuleInput) {
+      const { id, journeyId, ...fields } = data
+  
+      const [updated] = await db
+        .update(modules)
+        .set(fields)
+        .where(
+          and(
+            eq(modules.id, id),
+            eq(modules.journeyId, journeyId)
+          )
+        )
+        .returning()
+  
+      return updated ?? null
+    }
 }

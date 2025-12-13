@@ -4,6 +4,16 @@ import type { modules } from '../database/schema.ts'
 export type Modules = InferSelectModel<typeof modules>
 export type CreateModuleInput = InferInsertModel<typeof modules>
 
+export type EditModuleInput = {
+  id: string
+  journeyId: string
+  title?: string
+  slug?: string
+  description?: string
+  order?: number
+  hour?: number
+}
+
 export interface ModulesRepository {
   findById(id: string): Promise<Modules | null>
   findBySlugAndJourneyId(
@@ -22,4 +32,5 @@ export interface ModulesRepository {
       description: string | null
     }[]
   >
+  edit(data: EditModuleInput): Promise<Modules | null>
 }

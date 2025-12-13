@@ -16,8 +16,9 @@ const optionalStringOrEmptyToUndefined = () =>
   z
     .string()
     .trim()
-    .transform((val) => (val === '' ? undefined : val))
     .optional()
+    .transform((val) => (val === '' ? undefined : val));
+
 export const editJourneys: FastifyPluginAsyncZod = async (app) => {
   app.put(
     '/journeys/:id',
