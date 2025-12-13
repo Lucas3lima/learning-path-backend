@@ -25,6 +25,7 @@ import { getAllJourneysRoute } from './routes/journeys/get-all-journeys.ts'
 import { getJourneyOverviewRoute } from './routes/journeys/get-journeys-by-slug.ts'
 import { createLessons } from './routes/lessons/create-lessons.ts'
 import { createModules } from './routes/modules/create-modules.ts'
+import { editModules } from './routes/modules/edit-modules.ts'
 import { getUsersRoute } from './routes/users/get-users.ts'
 
 const app = fastify({
@@ -104,6 +105,7 @@ app.register(deleteJourneys)
 
 // MODULES
 app.register(createModules)
+app.register(editModules)
 
 // LESSONS
 app.register(createLessons)

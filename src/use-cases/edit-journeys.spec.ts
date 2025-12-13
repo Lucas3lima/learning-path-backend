@@ -68,7 +68,7 @@ describe('Edit journeys Use Case', () => {
     ).rejects.toBeInstanceOf(JourneysAlreadyExistsError)
   })
 
-  it('Should not be able to edit a jurney for a non-existing journey', async () => {
+  it('Should not be able to edit a journey for a non-existing journey', async () => {
     await expect(() =>
       sut.execute({
         id: '05',

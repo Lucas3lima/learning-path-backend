@@ -41,7 +41,7 @@ Tecnologias: **Node.js + Fastify + Drizzle ORM + JWT**
 ## 📦 MODULES
 - [x] Criar módulo
 - [x] Editar módulo
-- [ ] Deletar módulo
+- [x] Deletar módulo
 - [ ] Listar módulos da journey
 - [ ] Obrigatoriedade de ordem
 - [ ] Bloqueio de acesso se módulo anterior não concluído

@@ -33,7 +33,7 @@ const optionalIntOrEmptyToUndefined = () =>
     return val
   }, z.number().int().optional())
 
-export const createModules: FastifyPluginAsyncZod = async (app) => {
+export const editModules: FastifyPluginAsyncZod = async (app) => {
   app.put(
     '/journeys/:journeySlug/modules/:moduleId',
     {

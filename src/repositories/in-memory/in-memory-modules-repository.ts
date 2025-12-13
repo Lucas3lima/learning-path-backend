@@ -41,6 +41,17 @@ export class InMemoryModulesRepository implements ModulesRepository {
 
     return journey
   }
+  async findByIdAndJourneyId(id: string, journeyId: string) {
+    const journey = this.items.find(
+      (item) => item.id === id && item.journeyId === journeyId,
+    )
+
+    if (!journey) {
+      return null
+    }
+
+    return journey
+  }
   async create(data: CreateModuleInput) {
     const module = {
       id: data.id ?? crypto.randomUUID(),
@@ -96,5 +107,19 @@ export class InMemoryModulesRepository implements ModulesRepository {
     this.items[moduleIndex] = updatedModule
 
     return updatedModule
+  }
+
+  async delete(id: string) {
+    const index = this.items.findIndex(
+      (item) => item.id === id,
+    )
+
+    if (index === -1) {
+      return false
+    }
+
+    this.items.splice(index, 1)
+
+    return true
   }
 }

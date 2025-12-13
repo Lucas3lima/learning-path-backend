@@ -43,6 +43,18 @@ export class DrizzleModulesRepository implements ModulesRepository {
 
     return module
   }
+  async findByIdAndJourneyId(id: string, journeyId: string) {
+    const [module] = await db
+      .select()
+      .from(modules)
+      .where(and(eq(modules.id, id), eq(modules.journeyId, journeyId)))
+
+    if (!module) {
+      return null
+    }
+
+    return module
+  }
   async create(data: CreateModuleInput) {
     const [module] = await db.insert(modules).values(data).returning()
 
@@ -74,5 +86,17 @@ export class DrizzleModulesRepository implements ModulesRepository {
         .returning()
   
       return updated ?? null
-    }
+  }
+
+  async delete(id: string) {
+    const result = await db
+      .delete(modules)
+      .where(
+          eq(modules.id, id),
+      )
+      .returning({ id: modules.id })
+
+    // Se deletou, result[0] existe
+    return result.length > 0
+  }
 }
