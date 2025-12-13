@@ -1,10 +1,12 @@
 import type {
   CreateModuleInput,
+  EditModuleInput,
   Modules,
   ModulesRepository,
 } from '../modules-repository.ts'
 
 export class InMemoryModulesRepository implements ModulesRepository {
+  
   public items: Modules[] = []
   async findByJourneyId(journeyId: string) {
     return this.items
@@ -68,5 +70,31 @@ export class InMemoryModulesRepository implements ModulesRepository {
     const maxOrder = Math.max(...modules.map((m) => m.order ?? 0))
 
     return maxOrder + 1
+  }
+
+  async edit(data: EditModuleInput): Promise<Modules | null> {
+    const moduleIndex = this.items.findIndex(
+      (item) => item.id === data.id,
+    )
+
+    if (moduleIndex === -1) {
+      return null
+    }
+
+    const module = this.items[moduleIndex]
+
+    const updatedModule: Modules = {
+      ...module,
+      title: data.title ?? module.title,
+      slug: data.slug ?? module.slug,
+      description: data.description ?? module.description,
+      order: data.order ?? module.order,
+      hour: data.hour ?? module.hour,
+      updated_at: new Date(),
+    }
+
+    this.items[moduleIndex] = updatedModule
+
+    return updatedModule
   }
 }
