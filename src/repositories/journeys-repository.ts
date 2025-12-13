@@ -12,6 +12,7 @@ export type EditJourneyInput = {
   description?: string
   thumbnail_url?: string
   level?: 'Beginner' | 'Intermediate' | 'Advanced'
+  visible?: boolean
 }
 
 export interface JourneysRepository {

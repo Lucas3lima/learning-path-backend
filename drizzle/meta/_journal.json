@@ -43,6 +43,13 @@
       "when": 1765043466900,
       "tag": "0005_mushy_hawkeye",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1765652807591,
+      "tag": "0006_wise_lady_deathstrike",
+      "breakpoints": true
     }
   ]
 }

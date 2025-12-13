@@ -13,6 +13,7 @@ interface GetAllJourneysUseCaseReponse {
   description: string | null
   level: string
   thumbnail_url: string | null
+  visible: boolean
   sectors: {
     id: string
     name: string
@@ -73,6 +74,7 @@ export class GetAllJourneysUseCase {
             description: journey.description,
             level: journey.level,
             thumbnail_url: journey.thumbnail_url,
+            visible: journey.visible,
 
             responsible: {
               id: responsible?.id ?? '',

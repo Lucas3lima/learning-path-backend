@@ -9,8 +9,8 @@ Tecnologias: **Node.js + Fastify + Drizzle ORM + JWT**
 - [ ] Refresh token
 - [x] Seleção de planta ao logar
 - [ ] Logout (invalidar token - opcional)
-- [ ] Middleware auth
-- [ ] Middleware roles (student/manager/admin)
+- [X] Middleware auth
+- [X] Middleware roles (student/manager/admin)
 - [ ] Middleware plant-filter
 
 ---
@@ -28,7 +28,7 @@ Tecnologias: **Node.js + Fastify + Drizzle ORM + JWT**
 ## 🪜 JOURNEYS
 - [x] Criar journey
 - [x] Editar journey
-- [ ] Deletar journey
+- [x] Deletar journey
 - [x] Listar todas as journeys
 - [x] `get-journey-by-slug` com módulos/aulas
 - [ ] Journey pertencente a planta
@@ -40,7 +40,7 @@ Tecnologias: **Node.js + Fastify + Drizzle ORM + JWT**
 
 ## 📦 MODULES
 - [x] Criar módulo
-- [ ] Editar módulo
+- [x] Editar módulo
 - [ ] Deletar módulo
 - [ ] Listar módulos da journey
 - [ ] Obrigatoriedade de ordem

@@ -18,6 +18,19 @@ const optionalStringOrEmptyToUndefined = () =>
     .trim()
     .optional()
     .transform((val) => (val === '' ? undefined : val));
+    
+const optionalBooleanOrEmptyToUndefined = () =>
+  z
+    .union([z.boolean(), z.string()])
+    .optional()
+    .transform((val) => {
+      if (val === '' || val === undefined) return undefined
+      if (val === true || val === false) return val
+      if (val === 'true') return true
+      if (val === 'false') return false
+      return undefined
+    })
+
 
 export const editJourneys: FastifyPluginAsyncZod = async (app) => {
   app.put(
@@ -39,6 +52,7 @@ export const editJourneys: FastifyPluginAsyncZod = async (app) => {
           description: optionalStringOrEmptyToUndefined(),
           level: z.enum(trainingLevelValues).optional(),
           thumbnail_url: optionalStringOrEmptyToUndefined(),
+          visible: optionalBooleanOrEmptyToUndefined()
         }),
         response: {
           200: z.object({
@@ -55,7 +69,7 @@ export const editJourneys: FastifyPluginAsyncZod = async (app) => {
     },
     async (request, reply) => {
       const { id } = request.params
-      const { title, description, level, thumbnail_url } = request.body
+      const { title, description, level, thumbnail_url, visible } = request.body
       const user = getAuthenticatedUser(request)
 
       try {
@@ -69,6 +83,7 @@ export const editJourneys: FastifyPluginAsyncZod = async (app) => {
           level,
           thumbnail_url,
           plantId: user.plantId,
+          visible
         })
 
         reply.status(200).send({ journeyId: journey.id })

@@ -1,0 +1,1 @@
+ALTER TABLE "journeys" ADD COLUMN "visible" boolean DEFAULT true NOT NULL;

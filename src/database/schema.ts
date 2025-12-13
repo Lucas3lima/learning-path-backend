@@ -1,4 +1,5 @@
 import {
+  boolean,
   integer,
   pgEnum,
   pgTable,
@@ -94,6 +95,7 @@ export const journeys = pgTable(
     description: text(),
     thumbnail_url: text(),
     level: trainingLevel().notNull().default('Beginner'),
+    visible: boolean().notNull().default(true),
 
     created_at: timestamp({ withTimezone: true }).notNull().defaultNow(),
     updated_at: timestamp({ withTimezone: true }).notNull().defaultNow(),

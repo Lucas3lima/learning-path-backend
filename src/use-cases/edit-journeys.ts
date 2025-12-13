@@ -11,6 +11,7 @@ interface EditJourneysUseCaseRequest {
   description?: string
   thumbnail_url?: string
   level?: 'Beginner' | 'Intermediate' | 'Advanced'
+  visible?: boolean
 }
 
 export class EditJourneysUseCase {
@@ -25,6 +26,7 @@ export class EditJourneysUseCase {
     level,
     plantId,
     thumbnail_url,
+    visible
   }: EditJourneysUseCaseRequest) {
     if (!plantId) {
       throw new PlantNotSelectedError()
@@ -53,6 +55,7 @@ export class EditJourneysUseCase {
       level,
       thumbnail_url,
       plantId,
+      visible
     })
 
     if(!journey){

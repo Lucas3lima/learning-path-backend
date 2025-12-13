@@ -26,6 +26,7 @@ export const getAllJourneysRoute: FastifyPluginAsyncZod = async (app) => {
               description: z.string().nullable(),
               level: z.string(),
               thumbnail_url: z.string().nullable(),
+              visible: z.boolean(),
 
               responsible: z.object({
                 id: z.string(),
