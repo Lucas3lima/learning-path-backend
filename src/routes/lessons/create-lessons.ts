@@ -67,6 +67,17 @@ export const createLessons: FastifyPluginAsyncZod = async (app) => {
       for await (const part of parts) {
         // ARQUIVO
         if (part.type === 'file') {
+
+          if (file) {
+            // 🔥 DRENAR O STREAM
+            for await (const _ of part.file) {
+              // só consome
+            }
+            return reply.status(400).send({
+              message: 'É permitido enviar apenas 1 arquivo PDF.',
+            })
+          }
+
           if (part.mimetype !== 'application/pdf') {
             return reply.status(400).send({
               message: 'Arquivo inválido — apenas PDF é permitido.',
@@ -106,14 +117,6 @@ export const createLessons: FastifyPluginAsyncZod = async (app) => {
       if (!content)
         return reply.status(400).send({ message: 'Conteúdo é obrigatório.' })
 
-      // // AO MENOS 1 entre pdf ou video
-      // if ((!video_url || video_url === '')) {
-      //   return reply.status(400).send({
-      //     message: 'É necessário enviar um arquivo PDF ou um link de vídeo (pelo menos um dos dois).',
-      //   })
-      // }
-
-      console.log('Chegou aqui')
       try {
         const plantsRepo = new DrizzlePlantsRepository()
         const journeysRepo = new DrizzleJourneysRepository()
@@ -129,7 +132,7 @@ export const createLessons: FastifyPluginAsyncZod = async (app) => {
           storage,
         )
 
-        if (!content && !video_url && !file) {
+        if (!video_url && !file) {
           return reply.status(400).send({
             message: 'Envie ao menos um PDF ou um link de vídeo.',
           })
