@@ -3,9 +3,10 @@ import z from 'zod'
 import { GenericDeletingError } from '../../_erros/generic-deleting-error.ts'
 import { NotFoundError } from '../../_erros/not-found-error.ts'
 import { PlantNotSelectedError } from '../../_erros/plant-not-selected-error.ts'
+import { DiskStorageProvider } from '../../repositories/disk-storage/disk-storage-provider.ts'
 import { DrizzleJourneysRepository } from '../../repositories/drizzle/drizzle-journeys-repository.ts'
 import { DrizzleModulesRepository } from '../../repositories/drizzle/drizzle-modules-repository.ts'
-import { DeleteJourneysUseCase } from '../../use-cases/delete-journeys.ts'
+import { DrizzlePlantsRepository } from '../../repositories/drizzle/drizzle-plants-repository.ts'
 import { DeleteModulesUseCase } from '../../use-cases/delete-modules.ts'
 import { checkPlantRole } from '../../utils/check-plant-role.ts'
 import { getAuthenticatedUser } from '../../utils/get-authenticate-user.ts'
@@ -46,11 +47,15 @@ export const deleteModules: FastifyPluginAsyncZod = async (app) => {
       const user = getAuthenticatedUser(request)
 
       try {
+        const plantsRepository = new DrizzlePlantsRepository()
         const journeysRepository = new DrizzleJourneysRepository()
         const modulesRepository = new DrizzleModulesRepository()
+        const storageProvider = new DiskStorageProvider()
         const sut = new DeleteModulesUseCase(
+          plantsRepository,
           journeysRepository,
           modulesRepository,
+          storageProvider,
         )
 
         const { deleted } = await sut.execute({

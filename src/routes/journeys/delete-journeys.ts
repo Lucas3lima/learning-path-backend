@@ -2,7 +2,9 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod'
 import { GenericDeletingError } from '../../_erros/generic-deleting-error.ts'
 import { PlantNotSelectedError } from '../../_erros/plant-not-selected-error.ts'
+import { DiskStorageProvider } from '../../repositories/disk-storage/disk-storage-provider.ts'
 import { DrizzleJourneysRepository } from '../../repositories/drizzle/drizzle-journeys-repository.ts'
+import { DrizzlePlantsRepository } from '../../repositories/drizzle/drizzle-plants-repository.ts'
 import { DeleteJourneysUseCase } from '../../use-cases/delete-journeys.ts'
 import { checkPlantRole } from '../../utils/check-plant-role.ts'
 import { getAuthenticatedUser } from '../../utils/get-authenticate-user.ts'
@@ -42,8 +44,14 @@ export const deleteJourneys: FastifyPluginAsyncZod = async (app) => {
       const user = getAuthenticatedUser(request)
 
       try {
+        const plantsRepository = new DrizzlePlantsRepository()
         const journeysRepository = new DrizzleJourneysRepository()
-        const sut = new DeleteJourneysUseCase(journeysRepository)
+        const storageProvider = new DiskStorageProvider()
+        const sut = new DeleteJourneysUseCase(
+          plantsRepository,
+          journeysRepository,
+          storageProvider,
+        )
 
         const { deleted } = await sut.execute({
           id,

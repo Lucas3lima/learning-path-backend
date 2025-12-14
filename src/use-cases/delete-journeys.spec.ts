@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { GenericDeletingError } from '../_erros/generic-deleting-error.ts'
 import { PlantNotFoundError } from '../_erros/plant-not-found-error.ts'
 import { FakeStorageProvider } from '../repositories/disk-storage/fake-storage-provider.ts'
 import { InMemoryJourneysRepository } from '../repositories/in-memory/in-memory-journeys-repository.ts'

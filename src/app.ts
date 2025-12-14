@@ -29,6 +29,7 @@ import { editLessons } from './routes/lessons/edit-lessons.ts'
 import { editLessonsPDFs } from './routes/lessons/edit-lessons-pdf.ts'
 import { ListModuleLessonsRoute } from './routes/lessons/list-module-lessons.ts'
 import { createModules } from './routes/modules/create-modules.ts'
+import { deleteModules } from './routes/modules/delete-modules.ts'
 import { editModules } from './routes/modules/edit-modules.ts'
 import { getUsersRoute } from './routes/users/get-users.ts'
 
@@ -110,6 +111,7 @@ app.register(deleteJourneys)
 // MODULES
 app.register(createModules)
 app.register(editModules)
+app.register(deleteModules)
 
 // LESSONS
 app.register(createLessons)
