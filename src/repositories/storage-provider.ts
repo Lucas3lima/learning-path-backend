@@ -13,4 +13,6 @@ export interface StorageProvider {
     filename: string,
     folder: string,
   ): Promise<string>
+
+  deleteFolder(folderPath: string): Promise<void>
 }

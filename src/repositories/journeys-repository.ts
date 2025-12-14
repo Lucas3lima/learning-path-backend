@@ -19,7 +19,8 @@ export interface JourneysRepository {
   findById(id: string): Promise<Journey | null>
   findByPlantId(plantId: string): Promise<Journey[]>
   findBySlugAndPlant(slug: string, plantId: string): Promise<Journey | null>
+  findByIdAndPlant(id: string, plantId: string): Promise<Journey | null>
   create(data: CreateJourneyInput): Promise<Journey>
   edit(data: EditJourneyInput): Promise<Journey | null>
-  delete(id: string, plantId: string): Promise<boolean>
+  delete(id: string): Promise<boolean>
 }

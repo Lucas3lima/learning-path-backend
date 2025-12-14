@@ -73,5 +73,17 @@ export class DrizzleLessonsRepository implements LessonsRepository {
         .returning()
   
       return updated ?? null
-    }
+  }
+  async delete(id: string) {
+    const result = await db
+      .delete(lessons)
+      .where(
+          eq(lessons.id, id),
+      )
+      .returning({ id: lessons.id })
+
+    // Se deletou, result[0] existe
+    return result.length > 0
+  }
+
 }

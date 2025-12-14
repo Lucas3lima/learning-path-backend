@@ -40,6 +40,18 @@ export class DrizzleJourneysRepository implements JourneysRepository {
 
     return journey
   }
+  async findByIdAndPlant(id: string, plantId: string) {
+    const [journey] = await db
+      .select()
+      .from(journeys)
+      .where(and(eq(journeys.id, id), eq(journeys.plantId, plantId)))
+
+    if (!journey) {
+      return null
+    }
+
+    return journey
+  }
   async create(data: CreateJourneyInput) {
     const [journey] = await db.insert(journeys).values(data).returning()
 
@@ -63,14 +75,11 @@ export class DrizzleJourneysRepository implements JourneysRepository {
     return updated ?? null
   }
 
-  async delete(id: string, plantId: string) {
+  async delete(id: string) {
     const result = await db
       .delete(journeys)
       .where(
-        and(
           eq(journeys.id, id),
-          eq(journeys.plantId, plantId)
-        )
       )
       .returning({ id: journeys.id })
 

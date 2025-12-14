@@ -1,44 +1,43 @@
 import { GenericDeletingError } from '../_erros/generic-deleting-error.ts'
 import { NotFoundError } from '../_erros/not-found-error.ts'
-import { PlantNotFoundError } from '../_erros/plant-not-found-error.ts'
 import { PlantNotSelectedError } from '../_erros/plant-not-selected-error.ts'
 import type { JourneysRepository } from '../repositories/journeys-repository.ts'
+import type { LessonsRepository } from '../repositories/lessons-repository.ts'
 import type { ModulesRepository } from '../repositories/modules-repository.ts'
-import type { PlantsRepository } from '../repositories/plants-repository.ts'
 import type { StorageProvider } from '../repositories/storage-provider.ts'
 
-interface DeleteJourneyUseCaseRequest {
+interface DeleteLessonsUseCaseRequest {
   id: string
   journeySlug: string
+  moduleSlug: string
   plantId?: string
 }
 
-export class DeleteModulesUseCase {
-  private plantsRepository: PlantsRepository
+export class DeleteLessonsUseCase {
   private journeysRepository: JourneysRepository
   private modulesRepository: ModulesRepository
+  private lessonsRepository: LessonsRepository
   private storageProvider: StorageProvider
   constructor(
-    plantsRepository: PlantsRepository,
     journeysRepository: JourneysRepository,
     modulesRepository: ModulesRepository,
+    lessonsRepository: LessonsRepository,
     storageProvider: StorageProvider,
   ) {
-    this.plantsRepository = plantsRepository
     this.journeysRepository = journeysRepository
     this.modulesRepository = modulesRepository
+    this.lessonsRepository = lessonsRepository
     this.storageProvider = storageProvider
   }
 
-  async execute({ id, plantId, journeySlug }: DeleteJourneyUseCaseRequest) {
+  async execute({
+    id,
+    plantId,
+    journeySlug,
+    moduleSlug,
+  }: DeleteLessonsUseCaseRequest) {
     if (!plantId) {
       throw new PlantNotSelectedError()
-    }
-
-    const plant = await this.plantsRepository.findById(plantId)
-
-    if (!plant) {
-      throw new PlantNotFoundError()
     }
 
     const journey = await this.journeysRepository.findBySlugAndPlant(
@@ -50,8 +49,8 @@ export class DeleteModulesUseCase {
       throw new NotFoundError('Trilha não encontrada!')
     }
 
-    const module = await this.modulesRepository.findByIdAndJourneyId(
-      id,
+    const module = await this.modulesRepository.findBySlugAndJourneyId(
+      moduleSlug,
       journey.id,
     )
 
@@ -59,12 +58,22 @@ export class DeleteModulesUseCase {
       throw new NotFoundError('Módulo não encontrado')
     }
 
-    await this.storageProvider.deleteFolder(`uploads/${plant.slug}/${journey.slug}/${module.slug}`)
+    const lesson = await this.lessonsRepository.findByIdAndModuleId(
+      id,
+      module.id,
+    )
 
-    const deleted = await this.modulesRepository.delete(id)
+    if (!lesson) {
+      throw new NotFoundError('Aula não encontrada')
+    }
+    console.log(lesson.pdf_url)
+    if(lesson.pdf_url){
+      await this.storageProvider.deleteFile(lesson.pdf_url)
+    }
+    const deleted = await this.lessonsRepository.delete(id)
 
     if (!deleted) {
-      throw new GenericDeletingError('Módulo não não pôde ser deletado.')
+      throw new GenericDeletingError('Aula não não pôde ser deletada.')
     }
 
     return {

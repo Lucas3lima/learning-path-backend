@@ -34,6 +34,17 @@ export class InMemoryJourneysRepository implements JourneysRepository {
     
     return journey
   }
+  async findByIdAndPlant(id: string, plantId: string) {
+    const journey = this.items.find(
+      (item) => item.id === id && item.plantId === plantId,
+    )
+    
+    if (!journey) {
+      return null
+    }
+    
+    return journey
+  }
   async create(data: CreateJourneyInput) {
     const journey = {
       id: data.id ?? crypto.randomUUID(),
@@ -83,9 +94,9 @@ export class InMemoryJourneysRepository implements JourneysRepository {
   }
 
 
-  async delete(id: string, plantId: string) {
+  async delete(id: string) {
     const index = this.items.findIndex(
-      (item) => item.id === id && item.plantId === plantId,
+      (item) => item.id === id
     )
 
     if (index === -1) {

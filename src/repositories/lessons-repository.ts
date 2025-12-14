@@ -22,4 +22,5 @@ export interface LessonsRepository {
   create(data: CreateLessonsInput): Promise<Lessons>
   nextOrder(moduleId: string): Promise<number>
   edit(data: EditLessonInput): Promise<Lessons | null>
+  delete(id: string): Promise<boolean>
 }

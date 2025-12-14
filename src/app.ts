@@ -24,6 +24,7 @@ import { editJourneys } from './routes/journeys/edit-journeys.ts'
 import { getAllJourneysRoute } from './routes/journeys/get-all-journeys.ts'
 import { getJourneyOverviewRoute } from './routes/journeys/get-journeys-by-slug.ts'
 import { createLessons } from './routes/lessons/create-lessons.ts'
+import { deleteLessons } from './routes/lessons/delete-lessons.ts'
 import { editLessons } from './routes/lessons/edit-lessons.ts'
 import { editLessonsPDFs } from './routes/lessons/edit-lessons-pdf.ts'
 import { ListModuleLessonsRoute } from './routes/lessons/list-module-lessons.ts'
@@ -115,6 +116,7 @@ app.register(createLessons)
 app.register(ListModuleLessonsRoute)
 app.register(editLessons)
 app.register(editLessonsPDFs)
+app.register(deleteLessons)
 
 app.setErrorHandler((error, request, reply) => {
   // 🔹 Se for erro de validação do Zod
