@@ -84,18 +84,18 @@ export class InMemoryJourneysRepository implements JourneysRepository {
 
 
   async delete(id: string, plantId: string) {
-  const index = this.items.findIndex(
-    (item) => item.id === id && item.plantId === plantId,
-  )
+    const index = this.items.findIndex(
+      (item) => item.id === id && item.plantId === plantId,
+    )
 
-  if (index === -1) {
-    return false
+    if (index === -1) {
+      return false
+    }
+
+    this.items.splice(index, 1)
+
+    return true
   }
-
-  this.items.splice(index, 1)
-
-  return true
-}
 
 
 }

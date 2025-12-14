@@ -3,6 +3,7 @@ import { db } from '../../database/client.ts'
 import { lessons } from '../../database/schema.ts'
 import type {
   CreateLessonsInput,
+  EditLessonInput,
   LessonsRepository,
 } from '../lessons-repository.ts'
 
@@ -32,6 +33,18 @@ export class DrizzleLessonsRepository implements LessonsRepository {
 
     return lesson
   }
+  async findByIdAndModuleId(id: string, moduleId: string) {
+    const [lesson] = await db
+      .select()
+      .from(lessons)
+      .where(and(eq(lessons.id, id), eq(lessons.moduleId, moduleId)))
+
+    if (!lesson) {
+      return null
+    }
+
+    return lesson
+  }
   async create(data: CreateLessonsInput) {
     const [lesson] = await db.insert(lessons).values(data).returning()
 
@@ -47,4 +60,18 @@ export class DrizzleLessonsRepository implements LessonsRepository {
       .where(eq(lessons.moduleId, moduleId))
     return nextOrder
   }
+
+  async edit(data: EditLessonInput) {
+      const { id, ...fields } = data
+  
+      const [updated] = await db
+        .update(lessons)
+        .set(fields)
+        .where(
+            eq(lessons.id, id),
+        )
+        .returning()
+  
+      return updated ?? null
+    }
 }

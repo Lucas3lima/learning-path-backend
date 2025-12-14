@@ -37,12 +37,14 @@ export class DiskStorageProvider implements StorageProvider {
   }
 
   async replaceFile(
-    oldFilePath: string, 
+    oldFilePath: string | null, 
     file: AsyncIterable<Uint8Array> | NodeJS.ReadableStream, 
     filename: string, 
     folder: string) {
 
-      await this.deleteFile(oldFilePath)
+      if(oldFilePath !== null) {
+        await this.deleteFile(oldFilePath)
+      }
 
       return this.saveFile(file, filename, folder)
   }

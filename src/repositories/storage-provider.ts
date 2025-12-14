@@ -8,7 +8,7 @@ export interface StorageProvider {
   deleteFile(filePath: string): Promise<void>
 
   replaceFile(
-    oldFilePath: string,
+    oldFilePath: string | null,
     file: AsyncIterable<Uint8Array> | NodeJS.ReadableStream,
     filename: string,
     folder: string,
