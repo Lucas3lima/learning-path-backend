@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { GenericEditingError } from '../_erros/generic-editing-error.ts'
+import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
 import { ModulesAlreadyExistsError } from '../_erros/modules-already-exists-error.ts'
 import { NotFoundError } from '../_erros/not-found-error.ts'
 import { InMemoryJourneysRepository } from '../repositories/in-memory/in-memory-journeys-repository.ts'
@@ -102,7 +103,7 @@ describe('Edit modules Use Case', () => {
         plantId: 'plant-01',
         description: 'desc',
       }),
-    ).rejects.toBeInstanceOf(NotFoundError)
+    ).rejects.toBeInstanceOf(JourneysNotFoundError)
   })
   it('Should not be able to edit a module for a non-existing module', async () => {
     await inMemoryJourneysRepository.create({
@@ -114,7 +115,7 @@ describe('Edit modules Use Case', () => {
       responsibleId: 'resp-01',
       plantId: 'plant-01',
     })
-    
+
     await expect(() =>
       sut.execute({
         id: 'non-existing',

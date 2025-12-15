@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
 import { NotFoundError } from '../_erros/not-found-error.ts'
 import { PlantNotFoundError } from '../_erros/plant-not-found-error.ts'
 import { FakeStorageProvider } from '../repositories/disk-storage/fake-storage-provider.ts'
@@ -102,7 +103,7 @@ describe('Delete modules Use Case', () => {
       name: 'test',
       slug: 'test',
     })
-    
+
     await inMemoryJourneysRepository.create({
       id: '01',
       title: 'Journey',
@@ -127,7 +128,7 @@ describe('Delete modules Use Case', () => {
         journeySlug: 'wrong-journey-slug',
         plantId: 'plant-01',
       }),
-    ).rejects.toBeInstanceOf(NotFoundError)
+    ).rejects.toBeInstanceOf(JourneysNotFoundError)
   })
   it('should not be able to delete a journey with the wrong id', async () => {
     await inMemoryPlantsRepository.create({
@@ -136,7 +137,7 @@ describe('Delete modules Use Case', () => {
       name: 'test',
       slug: 'test',
     })
-    
+
     await inMemoryJourneysRepository.create({
       id: '01',
       title: 'Journey',
@@ -161,6 +162,6 @@ describe('Delete modules Use Case', () => {
         journeySlug: 'wrong-journey-slug',
         plantId: 'plant-01',
       }),
-    ).rejects.toBeInstanceOf(NotFoundError)
+    ).rejects.toBeInstanceOf(JourneysNotFoundError)
   })
 })

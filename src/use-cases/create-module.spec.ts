@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
 import { ModulesAlreadyExistsError } from '../_erros/modules-already-exists-error.ts'
-import { NotFoundError } from '../_erros/not-found-error.ts'
 import { InMemoryJourneysRepository } from '../repositories/in-memory/in-memory-journeys-repository.ts'
 import { InMemoryModulesRepository } from '../repositories/in-memory/in-memory-modules-repository.ts'
 import { CreateModuleUseCase } from './create-module.ts'
@@ -82,7 +82,7 @@ describe('Create modules Use Case', () => {
         journeySlug: 'unknown',
         plantId: 'plant-01',
       }),
-    ).rejects.toBeInstanceOf(NotFoundError)
+    ).rejects.toBeInstanceOf(JourneysNotFoundError)
   })
 
   it('Should increment order automatically', async () => {

@@ -1,10 +1,13 @@
 import { Readable } from 'node:stream'
 import { beforeEach, describe, expect, it } from 'vitest'
+import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
 import { LessonsAlreadyExistsError } from '../_erros/lessons-already-exists-error.ts'
+import { ModulesNotFoundError } from '../_erros/modules-not-found-error.ts'
 import { NotFoundError } from '../_erros/not-found-error.ts'
 import { FakeStorageProvider } from '../repositories/disk-storage/fake-storage-provider.ts'
 import { InMemoryJourneysRepository } from '../repositories/in-memory/in-memory-journeys-repository.ts'
 import { InMemoryLessonsRepository } from '../repositories/in-memory/in-memory-lessons-repository.ts'
+import { InMemoryModuleContentsRepository } from '../repositories/in-memory/in-memory-module-contents-repository.ts'
 import { InMemoryModulesRepository } from '../repositories/in-memory/in-memory-modules-repository.ts'
 import { InMemoryPlantsRepository } from '../repositories/in-memory/in-memory-plants-repository.ts'
 import { CreateLessonsUseCase } from './create-lessons.ts'
@@ -21,6 +24,7 @@ let inMemoryJourneysRepository: InMemoryJourneysRepository
 let inMemoryModulesRepository: InMemoryModulesRepository
 let inMemoryLessonsRepository: InMemoryLessonsRepository
 let fakeStorageProvider: FakeStorageProvider
+let inMemoryModuleContentsRepository: InMemoryModuleContentsRepository
 let sut: CreateLessonsUseCase
 
 describe('Create Lessons Use Case', () => {
@@ -30,6 +34,8 @@ describe('Create Lessons Use Case', () => {
     inMemoryJourneysRepository = new InMemoryJourneysRepository()
     inMemoryModulesRepository = new InMemoryModulesRepository()
     inMemoryLessonsRepository = new InMemoryLessonsRepository()
+    inMemoryModuleContentsRepository = new InMemoryModuleContentsRepository()
+
     fakeStorageProvider = new FakeStorageProvider()
     sut = new CreateLessonsUseCase(
       inMemoryPlantsRepository,
@@ -37,6 +43,7 @@ describe('Create Lessons Use Case', () => {
       inMemoryModulesRepository,
       inMemoryLessonsRepository,
       fakeStorageProvider,
+      inMemoryModuleContentsRepository,
     )
   })
 
@@ -76,7 +83,6 @@ describe('Create Lessons Use Case', () => {
       content: 'content...',
     })
 
-    expect(lesson.order).toEqual(1)
     expect(lesson.slug).toEqual('new-lesson')
     expect(lesson.moduleId).toEqual('01')
   })
@@ -146,7 +152,7 @@ describe('Create Lessons Use Case', () => {
         video_url: 'www.youtube.com',
         content: 'content...',
       }),
-    ).rejects.toBeInstanceOf(NotFoundError)
+    ).rejects.toBeInstanceOf(JourneysNotFoundError)
   })
 
   it('Should not be able to create a lesson for a non-existing module', async () => {
@@ -176,55 +182,7 @@ describe('Create Lessons Use Case', () => {
         video_url: 'www.youtube.com',
         content: 'content...',
       }),
-    ).rejects.toBeInstanceOf(NotFoundError)
-  })
-
-  it('Should increment order automatically', async () => {
-    await inMemoryPlantsRepository.create({
-      id: '1',
-      name: 'Test plant',
-      slug: 'test_plant',
-      country_id: '1',
-    })
-
-    await inMemoryJourneysRepository.create({
-      id: '01',
-      title: 'New Journey',
-      slug: 'new_journey',
-      description: 'Description...',
-      level: 'Intermediate',
-      responsibleId: 'resp-01',
-      plantId: '1',
-    })
-
-    await inMemoryModulesRepository.create({
-      id: '01',
-      title: 'New Module',
-      slug: 'new_module',
-      description: 'Description...',
-      hour: 1,
-      journeyId: '01',
-    })
-
-    await sut.execute({
-      title: 'New Lesson',
-      journeySlug: 'new_journey',
-      moduleSlug: 'new_module',
-      plantId: '1',
-      video_url: 'www.youtube.com',
-      content: 'content...',
-    })
-
-    const { lesson } = await sut.execute({
-      title: 'New Lesson 02',
-      journeySlug: 'new_journey',
-      moduleSlug: 'new_module',
-      plantId: '1',
-      video_url: 'www.youtube.com',
-      content: 'content...',
-    })
-
-    expect(lesson.order).toEqual(2)
+    ).rejects.toBeInstanceOf(ModulesNotFoundError)
   })
 
   it('Should allow creating lessons with the same title in different modules', async () => {

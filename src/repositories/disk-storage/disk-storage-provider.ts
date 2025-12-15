@@ -30,12 +30,10 @@ export class DiskStorageProvider implements StorageProvider {
     return `/uploads/${folder}/${finalName}`
   }
 
-
-
   async deleteFile(filePath: string): Promise<void> {
     const absolutePath = path.resolve(
       process.cwd(),
-      filePath.replace(/^\/+/, '') // remove "/" inicial
+      filePath.replace(/^\/+/, ''), // remove "/" inicial
     )
     console.log(absolutePath)
     if (fs.existsSync(absolutePath)) {
@@ -50,26 +48,27 @@ export class DiskStorageProvider implements StorageProvider {
   }
 
   async replaceFile(
-    oldFilePath: string | null, 
-    file: AsyncIterable<Uint8Array> | NodeJS.ReadableStream, 
-    filename: string, 
-    folder: string) {
+    oldFilePath: string | null,
+    file: AsyncIterable<Uint8Array> | NodeJS.ReadableStream,
+    filename: string,
+    folder: string,
+  ) {
+    if (oldFilePath !== null) {
+      await this.deleteFile(oldFilePath)
+    }
 
-      if(oldFilePath !== null) {
-        await this.deleteFile(oldFilePath)
-      }
-
-      return this.saveFile(file, filename, folder)
+    return this.saveFile(file, filename, folder)
   }
-
-  
 
   async deleteFolder(folderPath: string): Promise<void> {
     // remove barras iniciais
     const safePath = folderPath.replace(/^\/+/, '')
 
     // resolve sempre a partir de uploads/
-    const absolutePath = path.resolve(UPLOADS_ROOT, safePath.replace(/^uploads[\\/]/, ''))
+    const absolutePath = path.resolve(
+      UPLOADS_ROOT,
+      safePath.replace(/^uploads[\\/]/, ''),
+    )
 
     // 🔒 segurança: não deixar sair de uploads
     if (!absolutePath.startsWith(UPLOADS_ROOT)) {

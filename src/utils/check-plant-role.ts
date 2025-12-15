@@ -5,7 +5,6 @@ export function checkPlantRole(role: 'student' | 'manager') {
   return async (request: FastifyRequest, reply: FastifyReply) => {
     const user = getAuthenticatedUser(request)
 
-
     if (user.plantRole !== role) {
       return reply
         .status(403)

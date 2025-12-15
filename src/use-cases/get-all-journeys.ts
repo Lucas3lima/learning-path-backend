@@ -10,6 +10,7 @@ interface GetAllJourneysUseCaseRequest {
 interface GetAllJourneysUseCaseReponse {
   id: string
   title: string
+  slug: string
   description: string | null
   level: string
   thumbnail_url: string | null
@@ -71,6 +72,7 @@ export class GetAllJourneysUseCase {
           return {
             id: journey.id,
             title: journey.title,
+            slug: journey.slug,
             description: journey.description,
             level: journey.level,
             thumbnail_url: journey.thumbnail_url,

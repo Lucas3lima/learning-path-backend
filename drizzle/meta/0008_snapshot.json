@@ -1,6 +1,6 @@
 {
-  "id": "e73c82bd-59a3-447c-84e3-ad381db9c1cc",
-  "prevId": "b91b4f93-5529-4984-b0da-b95591b07a1b",
+  "id": "e75878e3-a8c7-409a-98bf-f6980fc0e79a",
+  "prevId": "838bd94f-f6fc-4d87-ac07-39aa6887dae2",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -52,6 +52,96 @@
           "columns": ["slug"]
         }
       },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.exams": {
+      "name": "exams",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "moduleId": {
+          "name": "moduleId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "exams_moduleId_slug_index": {
+          "name": "exams_moduleId_slug_index",
+          "columns": [
+            {
+              "expression": "moduleId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "slug",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "exams_moduleId_modules_id_fk": {
+          "name": "exams_moduleId_modules_id_fk",
+          "tableFrom": "exams",
+          "tableTo": "modules",
+          "columnsFrom": ["moduleId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -285,13 +375,6 @@
           "primaryKey": false,
           "notNull": true
         },
-        "order": {
-          "name": "order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 1
-        },
         "content": {
           "name": "content",
           "type": "text",
@@ -360,6 +443,114 @@
           "tableFrom": "lessons",
           "tableTo": "modules",
           "columnsFrom": ["moduleId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.module_contents": {
+      "name": "module_contents",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "moduleId": {
+          "name": "moduleId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "module_content_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lessonId": {
+          "name": "lessonId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "examId": {
+          "name": "examId",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "module_contents_moduleId_order_index": {
+          "name": "module_contents_moduleId_order_index",
+          "columns": [
+            {
+              "expression": "moduleId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "order",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "module_contents_moduleId_modules_id_fk": {
+          "name": "module_contents_moduleId_modules_id_fk",
+          "tableFrom": "module_contents",
+          "tableTo": "modules",
+          "columnsFrom": ["moduleId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "module_contents_lessonId_lessons_id_fk": {
+          "name": "module_contents_lessonId_lessons_id_fk",
+          "tableFrom": "module_contents",
+          "tableTo": "lessons",
+          "columnsFrom": ["lessonId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "module_contents_examId_exams_id_fk": {
+          "name": "module_contents_examId_exams_id_fk",
+          "tableFrom": "module_contents",
+          "tableTo": "exams",
+          "columnsFrom": ["examId"],
           "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -793,6 +984,11 @@
     }
   },
   "enums": {
+    "public.module_content_type": {
+      "name": "module_content_type",
+      "schema": "public",
+      "values": ["lesson", "exam"]
+    },
     "public.plant_role": {
       "name": "plant_role",
       "schema": "public",

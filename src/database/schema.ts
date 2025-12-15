@@ -153,7 +153,6 @@ export const lessons = pgTable(
     id: uuid().primaryKey().defaultRandom(),
     title: text().notNull(),
     slug: text().notNull(),
-    order: integer().default(1),
     content: text(),
     video_url: text(),
     pdf_url: text(),
@@ -166,4 +165,53 @@ export const lessons = pgTable(
       .references(() => modules.id, { onDelete: 'cascade' }),
   },
   (table) => [uniqueIndex().on(table.moduleId, table.slug)],
+)
+
+export const exams = pgTable(
+  'exams',
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    title: text().notNull(),
+    slug: text().notNull(),
+    description: text(),
+
+    created_at: timestamp({ withTimezone: true }).notNull().defaultNow(),
+    updated_at: timestamp({ withTimezone: true }).notNull().defaultNow(),
+
+    moduleId: uuid()
+      .notNull()
+      .references(() => modules.id, { onDelete: 'cascade' }),
+  },
+  (table) => [uniqueIndex().on(table.moduleId, table.slug)],
+)
+
+export const moduleContentTypeValues = ['lesson', 'exam'] as const
+
+export const moduleContentType = pgEnum(
+  'module_content_type',
+  moduleContentTypeValues,
+)
+
+export const moduleContents = pgTable(
+  'module_contents',
+  {
+    id: uuid().primaryKey().defaultRandom(),
+    moduleId: uuid()
+      .notNull()
+      .references(() => modules.id, { onDelete: 'cascade' }),
+
+    type: moduleContentType().notNull(),
+    order: integer().notNull(),
+
+    lessonId: uuid().references(() => lessons.id, {
+      onDelete: 'cascade',
+    }),
+
+    examId: uuid().references(() => exams.id, {
+      onDelete: 'cascade',
+    }),
+
+    created_at: timestamp({ withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [uniqueIndex().on(table.moduleId, table.order)],
 )

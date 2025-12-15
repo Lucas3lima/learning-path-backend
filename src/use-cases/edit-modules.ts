@@ -1,4 +1,5 @@
 import { GenericEditingError } from '../_erros/generic-editing-error.ts'
+import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
 import { ModulesAlreadyExistsError } from '../_erros/modules-already-exists-error.ts'
 import { NotFoundError } from '../_erros/not-found-error.ts'
 import { PlantNotSelectedError } from '../_erros/plant-not-selected-error.ts'
@@ -45,7 +46,7 @@ export class EditModulesUseCase {
     )
 
     if (!journey) {
-      throw new NotFoundError('Trilha não encontrada!')
+      throw new JourneysNotFoundError()
     }
 
     let slug: string | undefined

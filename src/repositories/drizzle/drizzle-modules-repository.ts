@@ -72,28 +72,21 @@ export class DrizzleModulesRepository implements ModulesRepository {
   }
 
   async edit(data: EditModuleInput) {
-      const { id, journeyId, ...fields } = data
-  
-      const [updated] = await db
-        .update(modules)
-        .set(fields)
-        .where(
-          and(
-            eq(modules.id, id),
-            eq(modules.journeyId, journeyId)
-          )
-        )
-        .returning()
-  
-      return updated ?? null
+    const { id, journeyId, ...fields } = data
+
+    const [updated] = await db
+      .update(modules)
+      .set(fields)
+      .where(and(eq(modules.id, id), eq(modules.journeyId, journeyId)))
+      .returning()
+
+    return updated ?? null
   }
 
   async delete(id: string) {
     const result = await db
       .delete(modules)
-      .where(
-          eq(modules.id, id),
-      )
+      .where(eq(modules.id, id))
       .returning({ id: modules.id })
 
     // Se deletou, result[0] existe

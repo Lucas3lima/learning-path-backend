@@ -10,13 +10,13 @@ interface ListModuleLessonsUseCaseRequest {
   moduleSlug: string
 }
 interface ListModuleLessonsUseCaseResponse {
-  id: string;
-  title: string;
-  slug: string;
-  order: number | null;
-  content: string | null;
-  video_url: string | null;
-  pdf_url: string | null;
+  id: string
+  title: string
+  slug: string
+  order: number | null
+  content: string | null
+  video_url: string | null
+  pdf_url: string | null
 }
 export class ListModuleLessonsUseCase {
   private journeysRepository: JourneysRepository
@@ -34,35 +34,42 @@ export class ListModuleLessonsUseCase {
   async execute({
     plantId,
     journeySlug,
-    moduleSlug
-  }: ListModuleLessonsUseCaseRequest): Promise<ListModuleLessonsUseCaseResponse[]> {
+    moduleSlug,
+  }: ListModuleLessonsUseCaseRequest): Promise<
+    ListModuleLessonsUseCaseResponse[]
+  > {
     if (!plantId) {
       throw new PlantNotSelectedError()
     }
 
-    const journey = await this.journeysRepository.findBySlugAndPlant(journeySlug,plantId)
+    const journey = await this.journeysRepository.findBySlugAndPlant(
+      journeySlug,
+      plantId,
+    )
 
-    if(!journey){
-        throw new NotFoundError('Trilha não encontrada!')
+    if (!journey) {
+      throw new NotFoundError('Trilha não encontrada!')
     }
 
-    const module = await this.modulesRepository.findBySlugAndJourneyId(moduleSlug,journey.id)
+    const module = await this.modulesRepository.findBySlugAndJourneyId(
+      moduleSlug,
+      journey.id,
+    )
 
-    if(!module){
-        throw new NotFoundError('Módulo não encontrado!')
+    if (!module) {
+      throw new NotFoundError('Módulo não encontrado!')
     }
 
     const lessons = await this.lessonsRepository.findByModuleId(module.id)
 
-
     return lessons.map((lesson) => ({
-        id: lesson.id,
-        title: lesson.title,
-        slug: lesson.slug,
-        order: lesson.order,
-        content: lesson.content,
-        video_url: lesson.video_url,
-        pdf_url: lesson.pdf_url,
+      id: lesson.id,
+      title: lesson.title,
+      slug: lesson.slug,
+      order: lesson.order,
+      content: lesson.content,
+      video_url: lesson.video_url,
+      pdf_url: lesson.pdf_url,
     }))
   }
 }

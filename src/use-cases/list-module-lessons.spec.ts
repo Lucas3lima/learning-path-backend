@@ -43,21 +43,21 @@ describe('Get all journeys Use Case', () => {
       id: '01',
       title: 'lesson 1',
       slug: 'lesson-1',
-      moduleId:'01',
-      video_url: 'www.youtube.com'
+      moduleId: '01',
+      video_url: 'www.youtube.com',
     })
     await inMemoryLessonsRepository.create({
       id: '02',
       title: 'lesson 2',
       slug: 'lesson-2',
-      moduleId:'01',
-      pdf_url: 'uploads/plant/journey/module/exemplo.pdf'
+      moduleId: '01',
+      pdf_url: 'uploads/plant/journey/module/exemplo.pdf',
     })
 
     const response = await sut.execute({
       plantId: '01',
       journeySlug: 'journey',
-      moduleSlug: 'module-01'
+      moduleSlug: 'module-01',
     })
 
     expect(response).toEqual(
@@ -66,19 +66,17 @@ describe('Get all journeys Use Case', () => {
           id: '01',
           title: 'lesson 1',
           slug: 'lesson-1',
-          order: 1,
           content: null,
           video_url: 'www.youtube.com',
-          pdf_url: null
+          pdf_url: null,
         }),
         expect.objectContaining({
           id: '02',
           title: 'lesson 2',
           slug: 'lesson-2',
-          order: 2,
           content: null,
           video_url: null,
-          pdf_url: 'uploads/plant/journey/module/exemplo.pdf'
+          pdf_url: 'uploads/plant/journey/module/exemplo.pdf',
         }),
       ]),
     )

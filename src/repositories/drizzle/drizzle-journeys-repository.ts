@@ -4,7 +4,7 @@ import { journeys } from '../../database/schema.ts'
 import type {
   CreateJourneyInput,
   EditJourneyInput,
-  JourneysRepository
+  JourneysRepository,
 } from '../journeys-repository.ts'
 
 export class DrizzleJourneysRepository implements JourneysRepository {
@@ -64,12 +64,7 @@ export class DrizzleJourneysRepository implements JourneysRepository {
     const [updated] = await db
       .update(journeys)
       .set(fields)
-      .where(
-        and(
-          eq(journeys.id, id),
-          eq(journeys.plantId, plantId)
-        )
-      )
+      .where(and(eq(journeys.id, id), eq(journeys.plantId, plantId)))
       .returning()
 
     return updated ?? null
@@ -78,9 +73,7 @@ export class DrizzleJourneysRepository implements JourneysRepository {
   async delete(id: string) {
     const result = await db
       .delete(journeys)
-      .where(
-          eq(journeys.id, id),
-      )
+      .where(eq(journeys.id, id))
       .returning({ id: journeys.id })
 
     // Se deletou, result[0] existe

@@ -1,5 +1,8 @@
 import { GenericEditingError } from '../_erros/generic-editing-error.ts'
 import { InvalidFileTypeError } from '../_erros/invalid-file-type-error.ts'
+import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
+import { LessonsNotFoundError } from '../_erros/lessons-not-found-error.ts'
+import { ModulesNotFoundError } from '../_erros/modules-not-found-error.ts'
 import { NotFoundError } from '../_erros/not-found-error.ts'
 import { PlantNotFoundError } from '../_erros/plant-not-found-error.ts'
 import { PlantNotSelectedError } from '../_erros/plant-not-selected-error.ts'
@@ -44,7 +47,7 @@ export class EditLessonsPDFUseCase {
     plantId,
     moduleSlug,
     file,
-    id
+    id,
   }: EditLessonsPDFUseCaseRequest) {
     if (!plantId) {
       throw new PlantNotSelectedError()
@@ -62,7 +65,7 @@ export class EditLessonsPDFUseCase {
     )
 
     if (!existingJourney) {
-      throw new NotFoundError('Trilha não encontrada!')
+      throw new JourneysNotFoundError()
     }
 
     const existingModules = await this.modulesRepository.findBySlugAndJourneyId(
@@ -71,7 +74,7 @@ export class EditLessonsPDFUseCase {
     )
 
     if (!existingModules) {
-      throw new NotFoundError('Módulo não encontrado!')
+      throw new ModulesNotFoundError()
     }
 
     const existingLessons = await this.lessonsRepository.findByIdAndModuleId(
@@ -80,11 +83,11 @@ export class EditLessonsPDFUseCase {
     )
 
     if (!existingLessons) {
-      throw new NotFoundError('Aula não encontrada!')
+      throw new LessonsNotFoundError()
     }
 
     let pdf_url: string | null = null
-    
+
     if (file.mimetype !== 'application/pdf') {
       throw new InvalidFileTypeError()
     }
@@ -100,10 +103,10 @@ export class EditLessonsPDFUseCase {
 
     const lesson = await this.lessonsRepository.edit({
       id: existingLessons.id,
-      pdf_url
+      pdf_url,
     })
 
-    if(!lesson){
+    if (!lesson) {
       throw new GenericEditingError('Não foi possível alterar o arquivo.')
     }
 

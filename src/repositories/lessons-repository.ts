@@ -9,7 +9,6 @@ export type EditLessonInput = {
   title?: string
   slug?: string
   content?: string
-  order?: number
   video_url?: string
   pdf_url?: string
 }
@@ -20,7 +19,6 @@ export interface LessonsRepository {
   findByIdAndModuleId(id: string, moduleId: string): Promise<Lessons | null>
   findByModuleId(moduleId: string): Promise<Lessons[]>
   create(data: CreateLessonsInput): Promise<Lessons>
-  nextOrder(moduleId: string): Promise<number>
   edit(data: EditLessonInput): Promise<Lessons | null>
   delete(id: string): Promise<boolean>
 }

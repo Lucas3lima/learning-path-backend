@@ -20,10 +20,7 @@ export interface ModulesRepository {
     slug: string,
     journeyId: string,
   ): Promise<Modules | null>
-  findByIdAndJourneyId(
-    id: string,
-    journeyId: string,
-  ): Promise<Modules | null>
+  findByIdAndJourneyId(id: string, journeyId: string): Promise<Modules | null>
   create(data: CreateModuleInput): Promise<Modules>
   nextOrder(journeyId: string): Promise<number>
   findByJourneyId(journeyId: string): Promise<

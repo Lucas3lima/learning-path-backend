@@ -53,7 +53,7 @@ Tecnologias: **Node.js + Fastify + Drizzle ORM + JWT**
 ## 🎥 LESSONS
 - [x] Criar aula
 - [x] Editar aula
-- [ ] Deletar aula
+- [x] Deletar aula
 - [x] Listar aulas do módulo
 - [ ] Marcar aula como concluída
 - [ ] Controle sequencial (não pular aula)

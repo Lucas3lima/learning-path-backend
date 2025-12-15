@@ -1,3 +1,4 @@
+import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
 import { NotFoundError } from '../_erros/not-found-error.ts'
 import { PlantNotSelectedError } from '../_erros/plant-not-selected-error.ts'
 import type { JourneysRepository } from '../repositories/journeys-repository.ts'
@@ -74,7 +75,7 @@ export class GetJourneyOverviewUseCase {
       plantId,
     )
     if (!journey) {
-      throw new NotFoundError('Trilha não encontrada.')
+      throw new JourneysNotFoundError()
     }
 
     // 2️⃣ Buscar responsável

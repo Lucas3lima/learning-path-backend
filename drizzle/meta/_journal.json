@@ -50,6 +50,20 @@
       "when": 1765652807591,
       "tag": "0006_wise_lady_deathstrike",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1765738417933,
+      "tag": "0007_living_red_ghost",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1765738639276,
+      "tag": "0008_uneven_enchantress",
+      "breakpoints": true
     }
   ]
 }

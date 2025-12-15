@@ -1,5 +1,6 @@
 import { GenericDeletingError } from '../_erros/generic-deleting-error.ts'
-import { NotFoundError } from '../_erros/not-found-error.ts'
+import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
+import { ModulesNotFoundError } from '../_erros/modules-not-found-error.ts'
 import { PlantNotFoundError } from '../_erros/plant-not-found-error.ts'
 import { PlantNotSelectedError } from '../_erros/plant-not-selected-error.ts'
 import type { JourneysRepository } from '../repositories/journeys-repository.ts'
@@ -47,7 +48,7 @@ export class DeleteModulesUseCase {
     )
 
     if (!journey) {
-      throw new NotFoundError('Trilha não encontrada!')
+      throw new JourneysNotFoundError()
     }
 
     const module = await this.modulesRepository.findByIdAndJourneyId(
@@ -56,10 +57,12 @@ export class DeleteModulesUseCase {
     )
 
     if (!module) {
-      throw new NotFoundError('Módulo não encontrado')
+      throw new ModulesNotFoundError()
     }
 
-    await this.storageProvider.deleteFolder(`uploads/${plant.slug}/${journey.slug}/${module.slug}`)
+    await this.storageProvider.deleteFolder(
+      `uploads/${plant.slug}/${journey.slug}/${module.slug}`,
+    )
 
     const deleted = await this.modulesRepository.delete(id)
 

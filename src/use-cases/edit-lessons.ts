@@ -1,5 +1,8 @@
 import { GenericEditingError } from '../_erros/generic-editing-error.ts'
+import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
 import { LessonsAlreadyExistsError } from '../_erros/lessons-already-exists-error.ts'
+import { LessonsNotFoundError } from '../_erros/lessons-not-found-error.ts'
+import { ModulesNotFoundError } from '../_erros/modules-not-found-error.ts'
 import { NotFoundError } from '../_erros/not-found-error.ts'
 import { PlantNotSelectedError } from '../_erros/plant-not-selected-error.ts'
 import type { JourneysRepository } from '../repositories/journeys-repository.ts'
@@ -14,7 +17,6 @@ interface EditLessonsUseCaseRequest {
   plantId?: string
   title?: string
   content?: string
-  order?: number
   video_url?: string
 }
 
@@ -36,7 +38,6 @@ export class EditLessonsUseCase {
     id,
     title,
     plantId,
-    order,
     journeySlug,
     moduleSlug,
     content,
@@ -52,7 +53,7 @@ export class EditLessonsUseCase {
     )
 
     if (!journey) {
-      throw new NotFoundError('Trilha não encontrada!')
+      throw new JourneysNotFoundError()
     }
 
     const module = await this.modulesRepository.findBySlugAndJourneyId(
@@ -60,14 +61,17 @@ export class EditLessonsUseCase {
       journey.id,
     )
 
-    if(!module) {
-      throw new NotFoundError('Módulo não encontrado!')
+    if (!module) {
+      throw new ModulesNotFoundError()
     }
 
-    const lessonExists = await this.lessonsRepository.findByIdAndModuleId(id,module.id)
+    const lessonExists = await this.lessonsRepository.findByIdAndModuleId(
+      id,
+      module.id,
+    )
 
-    if(!lessonExists) {
-      throw new NotFoundError('Aula não encontrado!')
+    if (!lessonExists) {
+      throw new LessonsNotFoundError()
     }
 
     let slug: string | undefined
@@ -75,8 +79,10 @@ export class EditLessonsUseCase {
     if (title) {
       slug = createSlug(title)
 
-      const existingLesson =
-        await this.lessonsRepository.findBySlugAndModuleId(slug,module.id)
+      const existingLesson = await this.lessonsRepository.findBySlugAndModuleId(
+        slug,
+        module.id,
+      )
 
       if (existingLesson) {
         throw new LessonsAlreadyExistsError()
@@ -86,16 +92,14 @@ export class EditLessonsUseCase {
     const lesson = await this.lessonsRepository.edit({
       id,
       content,
-      order,
       slug,
       title,
-      video_url
+      video_url,
     })
 
-    if(!lesson){
-          throw new GenericEditingError('Aula pôde ser atualizada.')
-        }
-
+    if (!lesson) {
+      throw new GenericEditingError('Aula pôde ser atualizada.')
+    }
 
     return {
       lesson,

@@ -49,7 +49,6 @@ export class InMemoryLessonsRepository implements LessonsRepository {
       title: data.title,
       slug: data.slug,
       moduleId: data.moduleId,
-      order: data.order ?? await this.nextOrder(data.moduleId),
       pdf_url: data.pdf_url ?? null,
       video_url: data.video_url ?? null,
       content: data.content ?? null,
@@ -63,41 +62,37 @@ export class InMemoryLessonsRepository implements LessonsRepository {
     return lesson
   }
 
-  async nextOrder(moduleId: string) {
-    const lessons = this.items.filter((item) => item.moduleId === moduleId)
+  async edit(data: EditLessonInput) {
+    const lessonIndex = this.items.findIndex((item) => item.id === data.id)
 
-    if (lessons.length === 0) {
-      return 1
+    if (lessonIndex === -1) {
+      return null
     }
 
-    const maxOrder = Math.max(...lessons.map((m) => m.order ?? 0))
+    const lesson = this.items[lessonIndex]
 
-    return maxOrder + 1
-  }
-
-  async edit(data: EditLessonInput){
-      const lessonIndex = this.items.findIndex(
-        (item) => item.id === data.id
-      )
-  
-      if (lessonIndex === -1) {
-        return null
-      }
-  
-      const lesson = this.items[lessonIndex]
-  
-      const updatedLesson: Lessons = {
-        ...lesson,
-        title: data.title ?? lesson.title,
-        slug: data.slug ?? lesson.slug,
-        content: data.content ?? lesson.content,
-        order: data.order ?? lesson.order,
-        video_url: data.video_url ?? lesson.video_url,
-        pdf_url: data.pdf_url ?? lesson.pdf_url,
-        updated_at: new Date(),
-      }
-      this.items[lessonIndex] = updatedLesson
+    const updatedLesson: Lessons = {
+      ...lesson,
+      title: data.title ?? lesson.title,
+      slug: data.slug ?? lesson.slug,
+      content: data.content ?? lesson.content,
+      video_url: data.video_url ?? lesson.video_url,
+      pdf_url: data.pdf_url ?? lesson.pdf_url,
+      updated_at: new Date(),
+    }
+    this.items[lessonIndex] = updatedLesson
 
     return updatedLesson
+  }
+  async delete(id: string) {
+    const index = this.items.findIndex((item) => item.id === id)
+
+    if (index === -1) {
+      return false
+    }
+
+    this.items.splice(index, 1)
+
+    return true
   }
 }

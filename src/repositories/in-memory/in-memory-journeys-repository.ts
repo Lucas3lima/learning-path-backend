@@ -7,42 +7,42 @@ import type {
 
 export class InMemoryJourneysRepository implements JourneysRepository {
   public items: Journey[] = []
-  
+
   async findByPlantId(plantId: string): Promise<Journey[]> {
     const journeys = this.items.filter((item) => item.plantId === plantId)
-    
+
     return journeys
   }
-  
+
   async findById(id: string) {
     const journey = this.items.find((item) => item.id === id)
-    
+
     if (!journey) {
       return null
     }
-    
+
     return journey
   }
   async findBySlugAndPlant(slug: string, plantId: string) {
     const journey = this.items.find(
       (item) => item.slug === slug && item.plantId === plantId,
     )
-    
+
     if (!journey) {
       return null
     }
-    
+
     return journey
   }
   async findByIdAndPlant(id: string, plantId: string) {
     const journey = this.items.find(
       (item) => item.id === id && item.plantId === plantId,
     )
-    
+
     if (!journey) {
       return null
     }
-    
+
     return journey
   }
   async create(data: CreateJourneyInput) {
@@ -56,17 +56,17 @@ export class InMemoryJourneysRepository implements JourneysRepository {
       plantId: data.plantId,
       thumbnail_url: null,
       visible: data.visible ?? true,
-      
+
       created_at: new Date(),
       updated_at: new Date(),
     }
-    
+
     this.items.push(journey)
-    
+
     return journey
   }
 
-  async edit(data: EditJourneyInput){
+  async edit(data: EditJourneyInput) {
     const journeyIndex = this.items.findIndex(
       (item) => item.id === data.id && item.plantId === data.plantId,
     )
@@ -93,11 +93,8 @@ export class InMemoryJourneysRepository implements JourneysRepository {
     return updatedJourney
   }
 
-
   async delete(id: string) {
-    const index = this.items.findIndex(
-      (item) => item.id === id
-    )
+    const index = this.items.findIndex((item) => item.id === id)
 
     if (index === -1) {
       return false
@@ -107,6 +104,4 @@ export class InMemoryJourneysRepository implements JourneysRepository {
 
     return true
   }
-
-
 }

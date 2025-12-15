@@ -6,7 +6,6 @@ import type {
 } from '../modules-repository.ts'
 
 export class InMemoryModulesRepository implements ModulesRepository {
-  
   public items: Modules[] = []
   async findByJourneyId(journeyId: string) {
     return this.items
@@ -84,9 +83,7 @@ export class InMemoryModulesRepository implements ModulesRepository {
   }
 
   async edit(data: EditModuleInput): Promise<Modules | null> {
-    const moduleIndex = this.items.findIndex(
-      (item) => item.id === data.id,
-    )
+    const moduleIndex = this.items.findIndex((item) => item.id === data.id)
 
     if (moduleIndex === -1) {
       return null
@@ -110,9 +107,7 @@ export class InMemoryModulesRepository implements ModulesRepository {
   }
 
   async delete(id: string) {
-    const index = this.items.findIndex(
-      (item) => item.id === id,
-    )
+    const index = this.items.findIndex((item) => item.id === id)
 
     if (index === -1) {
       return false

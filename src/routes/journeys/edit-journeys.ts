@@ -11,14 +11,13 @@ import { getAuthenticatedUser } from '../../utils/get-authenticate-user.ts'
 import { checkRequestJWT } from '../_hooks/check-request-jwt.ts'
 import { requireFullSession } from '../_hooks/requireFullSession.ts'
 
-
 const optionalStringOrEmptyToUndefined = () =>
   z
     .string()
     .trim()
     .optional()
-    .transform((val) => (val === '' ? undefined : val));
-    
+    .transform((val) => (val === '' ? undefined : val))
+
 const optionalBooleanOrEmptyToUndefined = () =>
   z
     .union([z.boolean(), z.string()])
@@ -30,7 +29,6 @@ const optionalBooleanOrEmptyToUndefined = () =>
       if (val === 'false') return false
       return undefined
     })
-
 
 export const editJourneys: FastifyPluginAsyncZod = async (app) => {
   app.put(
@@ -52,7 +50,7 @@ export const editJourneys: FastifyPluginAsyncZod = async (app) => {
           description: optionalStringOrEmptyToUndefined(),
           level: z.enum(trainingLevelValues).optional(),
           thumbnail_url: optionalStringOrEmptyToUndefined(),
-          visible: optionalBooleanOrEmptyToUndefined()
+          visible: optionalBooleanOrEmptyToUndefined(),
         }),
         response: {
           200: z.object({
@@ -83,7 +81,7 @@ export const editJourneys: FastifyPluginAsyncZod = async (app) => {
           level,
           thumbnail_url,
           plantId: user.plantId,
-          visible
+          visible,
         })
 
         reply.status(200).send({ journeyId: journey.id })

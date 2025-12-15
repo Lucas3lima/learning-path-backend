@@ -1,5 +1,7 @@
 import { GenericDeletingError } from '../_erros/generic-deleting-error.ts'
-import { NotFoundError } from '../_erros/not-found-error.ts'
+import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
+import { LessonsNotFoundError } from '../_erros/lessons-not-found-error.ts'
+import { ModulesNotFoundError } from '../_erros/modules-not-found-error.ts'
 import { PlantNotSelectedError } from '../_erros/plant-not-selected-error.ts'
 import type { JourneysRepository } from '../repositories/journeys-repository.ts'
 import type { LessonsRepository } from '../repositories/lessons-repository.ts'
@@ -46,7 +48,7 @@ export class DeleteLessonsUseCase {
     )
 
     if (!journey) {
-      throw new NotFoundError('Trilha não encontrada!')
+      throw new JourneysNotFoundError()
     }
 
     const module = await this.modulesRepository.findBySlugAndJourneyId(
@@ -55,7 +57,7 @@ export class DeleteLessonsUseCase {
     )
 
     if (!module) {
-      throw new NotFoundError('Módulo não encontrado')
+      throw new ModulesNotFoundError()
     }
 
     const lesson = await this.lessonsRepository.findByIdAndModuleId(
@@ -64,10 +66,10 @@ export class DeleteLessonsUseCase {
     )
 
     if (!lesson) {
-      throw new NotFoundError('Aula não encontrada')
+      throw new LessonsNotFoundError()
     }
     console.log(lesson.pdf_url)
-    if(lesson.pdf_url){
+    if (lesson.pdf_url) {
       await this.storageProvider.deleteFile(lesson.pdf_url)
     }
     const deleted = await this.lessonsRepository.delete(id)

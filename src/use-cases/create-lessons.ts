@@ -1,10 +1,13 @@
 import { InvalidFileTypeError } from '../_erros/invalid-file-type-error.ts'
+import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
 import { LessonsAlreadyExistsError } from '../_erros/lessons-already-exists-error.ts'
+import { ModulesNotFoundError } from '../_erros/modules-not-found-error.ts'
 import { NotFoundError } from '../_erros/not-found-error.ts'
 import { PlantNotFoundError } from '../_erros/plant-not-found-error.ts'
 import { PlantNotSelectedError } from '../_erros/plant-not-selected-error.ts'
 import type { JourneysRepository } from '../repositories/journeys-repository.ts'
 import type { LessonsRepository } from '../repositories/lessons-repository.ts'
+import type { ModuleContentsRepository } from '../repositories/module-contents-repository.ts'
 import type { ModulesRepository } from '../repositories/modules-repository.ts'
 import type { PlantsRepository } from '../repositories/plants-repository.ts'
 import type { StorageProvider } from '../repositories/storage-provider.ts'
@@ -28,6 +31,7 @@ export class CreateLessonsUseCase {
   private modulesRepository: ModulesRepository
   private lessonsRepository: LessonsRepository
   private storageProvider: StorageProvider
+  private moduleContentsRepository: ModuleContentsRepository
 
   constructor(
     plantsRepository: PlantsRepository,
@@ -35,12 +39,14 @@ export class CreateLessonsUseCase {
     modulesRepository: ModulesRepository,
     lessonsRepository: LessonsRepository,
     storageProvider: StorageProvider,
+    moduleContentsRepository: ModuleContentsRepository,
   ) {
     this.plantsRepository = plantsRepository
     this.journeysRepository = journeysRepository
     this.modulesRepository = modulesRepository
     this.lessonsRepository = lessonsRepository
     this.storageProvider = storageProvider
+    this.moduleContentsRepository = moduleContentsRepository
   }
   async execute({
     title,
@@ -69,7 +75,7 @@ export class CreateLessonsUseCase {
     )
 
     if (!existingJourney) {
-      throw new NotFoundError('Trilha não encontrada!')
+      throw new JourneysNotFoundError()
     }
 
     const existingModules = await this.modulesRepository.findBySlugAndJourneyId(
@@ -78,7 +84,7 @@ export class CreateLessonsUseCase {
     )
 
     if (!existingModules) {
-      throw new NotFoundError('Módulo não encontrado!')
+      throw new ModulesNotFoundError()
     }
 
     const existingLessons = await this.lessonsRepository.findBySlugAndModuleId(
@@ -90,8 +96,6 @@ export class CreateLessonsUseCase {
       throw new LessonsAlreadyExistsError()
     }
 
-    const nextOrder = await this.lessonsRepository.nextOrder(existingModules.id)
-
     let pdf_url: string | null = null
 
     if (file) {
@@ -99,7 +103,7 @@ export class CreateLessonsUseCase {
         throw new InvalidFileTypeError()
       }
 
-      const folder = `${existingPlant.slug}/${journeySlug}/${moduleSlug}`
+      const folder = `${existingPlant.slug}/${existingJourney.slug}/${existingModules.slug}`
 
       pdf_url = await this.storageProvider.saveFile(
         file.stream,
@@ -112,14 +116,23 @@ export class CreateLessonsUseCase {
       title,
       slug,
       content,
-      order: nextOrder,
       pdf_url,
       video_url,
       moduleId: existingModules.id,
     })
 
+    const nextOrder = await this.moduleContentsRepository.nextOrder(existingModules.id)
+
+    const moduleContent = await this.moduleContentsRepository.create({
+      moduleId: existingModules.id,
+      type: 'lesson',
+      lessonId: lesson.id,
+      order: nextOrder
+    })
+
     return {
       lesson,
+      moduleContent
     }
   }
 }

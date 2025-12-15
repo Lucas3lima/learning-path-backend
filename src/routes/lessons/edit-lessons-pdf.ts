@@ -67,7 +67,6 @@ export const editLessonsPDFs: FastifyPluginAsyncZod = async (app) => {
 
       for await (const part of parts) {
         if (part.type === 'file') {
-
           if (file) {
             // 🔥 DRENAR O STREAM
             for await (const _ of part.file) {
@@ -77,7 +76,7 @@ export const editLessonsPDFs: FastifyPluginAsyncZod = async (app) => {
               message: 'É permitido enviar apenas 1 arquivo PDF.',
             })
           }
-          
+
           if (part.mimetype !== 'application/pdf') {
             return reply.status(400).send({
               message: 'Arquivo inválido — apenas PDF é permitido.',

@@ -9,6 +9,7 @@ import { PlantNotSelectedError } from '../../_erros/plant-not-selected-error.ts'
 import { DiskStorageProvider } from '../../repositories/disk-storage/disk-storage-provider.ts'
 import { DrizzleJourneysRepository } from '../../repositories/drizzle/drizzle-journeys-repository.ts'
 import { DrizzleLessonsRepository } from '../../repositories/drizzle/drizzle-lessons-repository.ts'
+import { DrizzleModuleContentsRepository } from '../../repositories/drizzle/drizzle-module-contents-repository.ts'
 import { DrizzleModulesRepository } from '../../repositories/drizzle/drizzle-modules-repository.ts'
 import { DrizzlePlantsRepository } from '../../repositories/drizzle/drizzle-plants-repository.ts'
 import { CreateLessonsUseCase } from '../../use-cases/create-lessons.ts'
@@ -67,7 +68,6 @@ export const createLessons: FastifyPluginAsyncZod = async (app) => {
       for await (const part of parts) {
         // ARQUIVO
         if (part.type === 'file') {
-
           if (file) {
             // 🔥 DRENAR O STREAM
             for await (const _ of part.file) {
@@ -123,6 +123,7 @@ export const createLessons: FastifyPluginAsyncZod = async (app) => {
         const modulesRepo = new DrizzleModulesRepository()
         const lessonsRepo = new DrizzleLessonsRepository()
         const storage = new DiskStorageProvider()
+        const moduleContents = new DrizzleModuleContentsRepository()
 
         const sut = new CreateLessonsUseCase(
           plantsRepo,
@@ -130,6 +131,7 @@ export const createLessons: FastifyPluginAsyncZod = async (app) => {
           modulesRepo,
           lessonsRepo,
           storage,
+          moduleContents,
         )
 
         if (!video_url && !file) {

@@ -1,4 +1,4 @@
-export class GenericDeletingError  extends Error {
+export class GenericDeletingError extends Error {
   constructor(message: string) {
     super(message)
   }

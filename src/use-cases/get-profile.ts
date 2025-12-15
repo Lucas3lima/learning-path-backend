@@ -1,4 +1,5 @@
 import { NotFoundError } from '../_erros/not-found-error.ts'
+import { PlantNotFoundError } from '../_erros/plant-not-found-error.ts'
 import type { UserPlantsRepository } from '../repositories/userPlants-repository.ts'
 import type { UsersRepository } from '../repositories/users-repository.ts'
 
@@ -40,7 +41,7 @@ export class GetProfileUseCase {
     )
 
     if (!plant) {
-      throw new NotFoundError('Planta não encontrada!')
+      throw new PlantNotFoundError()
     }
 
     return {

@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
 import { LessonsAlreadyExistsError } from '../_erros/lessons-already-exists-error.ts'
-import { NotFoundError } from '../_erros/not-found-error.ts'
+import { LessonsNotFoundError } from '../_erros/lessons-not-found-error.ts'
+import { ModulesNotFoundError } from '../_erros/modules-not-found-error.ts'
 import { InMemoryJourneysRepository } from '../repositories/in-memory/in-memory-journeys-repository.ts'
 import { InMemoryLessonsRepository } from '../repositories/in-memory/in-memory-lessons-repository.ts'
 import { InMemoryModulesRepository } from '../repositories/in-memory/in-memory-modules-repository.ts'
@@ -126,7 +128,7 @@ describe('Edit lessons Use Case', () => {
         video_url: 'www.youtube.com/channel',
         plantId: 'plant-01',
       }),
-    ).rejects.toBeInstanceOf(NotFoundError)
+    ).rejects.toBeInstanceOf(JourneysNotFoundError)
   })
   it('Should not be able to edit a lessons for a non-existing module', async () => {
     await inMemoryJourneysRepository.create({
@@ -138,7 +140,7 @@ describe('Edit lessons Use Case', () => {
       responsibleId: 'resp-01',
       plantId: 'plant-01',
     })
-    
+
     await expect(() =>
       sut.execute({
         id: '01',
@@ -149,7 +151,7 @@ describe('Edit lessons Use Case', () => {
         video_url: 'www.youtube.com/channel',
         plantId: 'plant-01',
       }),
-    ).rejects.toBeInstanceOf(NotFoundError)
+    ).rejects.toBeInstanceOf(ModulesNotFoundError)
   })
   it('Should not be able to edit a lessons for a non-existing lesson', async () => {
     await inMemoryJourneysRepository.create({
@@ -169,7 +171,7 @@ describe('Edit lessons Use Case', () => {
       slug: 'modulo-01',
       hour: 10,
     })
-    
+
     await expect(() =>
       sut.execute({
         id: 'non-existing',
@@ -180,6 +182,6 @@ describe('Edit lessons Use Case', () => {
         video_url: 'www.youtube.com/channel',
         plantId: 'plant-01',
       }),
-    ).rejects.toBeInstanceOf(NotFoundError)
+    ).rejects.toBeInstanceOf(LessonsNotFoundError)
   })
 })

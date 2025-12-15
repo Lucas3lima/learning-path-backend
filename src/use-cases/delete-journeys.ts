@@ -1,4 +1,5 @@
 import { GenericDeletingError } from '../_erros/generic-deleting-error.ts'
+import { JourneysNotFoundErros } from '../_erros/journeys-not-found-error.ts'
 import { NotFoundError } from '../_erros/not-found-error.ts'
 import { PlantNotFoundError } from '../_erros/plant-not-found-error.ts'
 import { PlantNotSelectedError } from '../_erros/plant-not-selected-error.ts'
@@ -37,18 +38,18 @@ export class DeleteJourneysUseCase {
 
     const journey = await this.journeysRepository.findByIdAndPlant(id, plant.id)
 
-    if(!journey){
-      throw new NotFoundError('Trilha não encontrada!')
+    if (!journey) {
+      throw new JourneysNotFoundErros()
     }
 
-    await this.storageProvider.deleteFolder(`uploads/${plant.slug}/${journey.slug}`)
+    await this.storageProvider.deleteFolder(
+      `uploads/${plant.slug}/${journey.slug}`,
+    )
 
     const deleted = await this.journeysRepository.delete(journey.id)
 
     if (!deleted) {
-      throw new GenericDeletingError(
-        'Trilha não pôde ser deletada.',
-      )
+      throw new GenericDeletingError('Trilha não pôde ser deletada.')
     }
 
     return {

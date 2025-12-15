@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { NotFoundError } from '../_erros/not-found-error.ts'
+import { PlantNotFoundError } from '../_erros/plant-not-found-error.ts'
 import { InMemoryUsersRepository } from '../repositories/in-memory/in-memory-user-repository.ts'
 import { InMemoryUsersPlantsRepository } from '../repositories/in-memory/in-memory-userPlants-repository.ts'
 import { GetProfileUseCase } from './get-profile.ts'
@@ -72,6 +73,6 @@ describe('Get profile Use Case', () => {
         userId: user.id,
         plantId: 'plant-not-linked',
       }),
-    ).rejects.toBeInstanceOf(NotFoundError)
+    ).rejects.toBeInstanceOf(PlantNotFoundError)
   })
 })

@@ -26,7 +26,7 @@ export class EditJourneysUseCase {
     level,
     plantId,
     thumbnail_url,
-    visible
+    visible,
   }: EditJourneysUseCaseRequest) {
     if (!plantId) {
       throw new PlantNotSelectedError()
@@ -55,11 +55,13 @@ export class EditJourneysUseCase {
       level,
       thumbnail_url,
       plantId,
-      visible
+      visible,
     })
 
-    if(!journey){
-      throw new GenericEditingError('Jornada não encontrada ou não pôde ser atualizada.')
+    if (!journey) {
+      throw new GenericEditingError(
+        'Jornada não encontrada ou não pôde ser atualizada.',
+      )
     }
 
     return {

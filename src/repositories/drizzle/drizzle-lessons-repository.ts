@@ -51,39 +51,24 @@ export class DrizzleLessonsRepository implements LessonsRepository {
     return lesson
   }
 
-  async nextOrder(moduleId: string) {
-    const [{ nextOrder }] = await db
-      .select({
-        nextOrder: sql<number>`COALESCE(MAX(${lessons.order}) + 1, 1)`,
-      })
-      .from(lessons)
-      .where(eq(lessons.moduleId, moduleId))
-    return nextOrder
-  }
-
   async edit(data: EditLessonInput) {
-      const { id, ...fields } = data
-  
-      const [updated] = await db
-        .update(lessons)
-        .set(fields)
-        .where(
-            eq(lessons.id, id),
-        )
-        .returning()
-  
-      return updated ?? null
+    const { id, ...fields } = data
+
+    const [updated] = await db
+      .update(lessons)
+      .set(fields)
+      .where(eq(lessons.id, id))
+      .returning()
+
+    return updated ?? null
   }
   async delete(id: string) {
     const result = await db
       .delete(lessons)
-      .where(
-          eq(lessons.id, id),
-      )
+      .where(eq(lessons.id, id))
       .returning({ id: lessons.id })
 
     // Se deletou, result[0] existe
     return result.length > 0
   }
-
 }
