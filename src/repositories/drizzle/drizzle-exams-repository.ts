@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm'
+import { and, eq, inArray } from 'drizzle-orm'
 import { db } from '../../database/client.ts'
 import { exams } from '../../database/schema.ts'
 import type {
@@ -63,4 +63,16 @@ export class DrizzleExamsRepository implements ExamsRepository {
     // Se deletou, result[0] existe
     return result.length > 0
   }
+
+  async findManyByIds(ids: string[]){
+      if(ids.length === 0) {
+        return []
+      }
+  
+      const result = await db.select()
+        .from(exams)
+        .where(inArray(exams.id,ids))
+  
+      return result
+    }
 }

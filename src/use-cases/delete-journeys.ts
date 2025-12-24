@@ -1,6 +1,5 @@
 import { GenericDeletingError } from '../_erros/generic-deleting-error.ts'
-import { JourneysNotFoundErros } from '../_erros/journeys-not-found-error.ts'
-import { NotFoundError } from '../_erros/not-found-error.ts'
+import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
 import { PlantNotFoundError } from '../_erros/plant-not-found-error.ts'
 import { PlantNotSelectedError } from '../_erros/plant-not-selected-error.ts'
 import type { JourneysRepository } from '../repositories/journeys-repository.ts'
@@ -39,7 +38,7 @@ export class DeleteJourneysUseCase {
     const journey = await this.journeysRepository.findByIdAndPlant(id, plant.id)
 
     if (!journey) {
-      throw new JourneysNotFoundErros()
+      throw new JourneysNotFoundError()
     }
 
     await this.storageProvider.deleteFolder(

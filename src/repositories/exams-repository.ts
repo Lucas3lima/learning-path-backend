@@ -11,4 +11,5 @@ export interface ExamsRepository {
   findByModuleId(moduleId: string): Promise<Exams[]>
   create(data: CreateExamsInput): Promise<Exams>
   delete(id: string): Promise<boolean>
+  findManyByIds(ids: string[]): Promise<Exams[]>
 }

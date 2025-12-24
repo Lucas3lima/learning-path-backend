@@ -28,10 +28,10 @@ import { createLessons } from './routes/lessons/create-lessons.ts'
 import { deleteLessons } from './routes/lessons/delete-lessons.ts'
 import { editLessons } from './routes/lessons/edit-lessons.ts'
 import { editLessonsPDFs } from './routes/lessons/edit-lessons-pdf.ts'
-import { ListModuleLessonsRoute } from './routes/lessons/list-module-lessons.ts'
 import { createModules } from './routes/modules/create-modules.ts'
 import { deleteModules } from './routes/modules/delete-modules.ts'
 import { editModules } from './routes/modules/edit-modules.ts'
+import { ListModuleLessonsRoute } from './routes/modules/list-module-contents.ts'
 import { getUsersRoute } from './routes/users/get-users.ts'
 
 const app = fastify({

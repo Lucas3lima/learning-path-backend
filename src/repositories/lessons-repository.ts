@@ -21,4 +21,5 @@ export interface LessonsRepository {
   create(data: CreateLessonsInput): Promise<Lessons>
   edit(data: EditLessonInput): Promise<Lessons | null>
   delete(id: string): Promise<boolean>
+  findManyByIds(ids: string[]): Promise<Lessons[]>
 }

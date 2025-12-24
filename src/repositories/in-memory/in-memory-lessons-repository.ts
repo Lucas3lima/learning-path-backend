@@ -95,4 +95,14 @@ export class InMemoryLessonsRepository implements LessonsRepository {
 
     return true
   }
+
+  async findManyByIds(ids: string[]){
+
+    if(ids.length === 0){
+      return []
+    }
+
+    return this.items.filter((exam) => ids.includes(exam.id))
+
+  }
 }

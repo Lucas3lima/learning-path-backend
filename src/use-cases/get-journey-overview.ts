@@ -1,5 +1,4 @@
 import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
-import { NotFoundError } from '../_erros/not-found-error.ts'
 import { PlantNotSelectedError } from '../_erros/plant-not-selected-error.ts'
 import type { JourneysRepository } from '../repositories/journeys-repository.ts'
 import type { JourneysSectorsRepository } from '../repositories/journeys-sectors-repository.ts'

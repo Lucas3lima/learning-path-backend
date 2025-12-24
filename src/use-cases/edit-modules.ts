@@ -1,7 +1,6 @@
 import { GenericEditingError } from '../_erros/generic-editing-error.ts'
 import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
 import { ModulesAlreadyExistsError } from '../_erros/modules-already-exists-error.ts'
-import { NotFoundError } from '../_erros/not-found-error.ts'
 import { PlantNotSelectedError } from '../_erros/plant-not-selected-error.ts'
 import type { JourneysRepository } from '../repositories/journeys-repository.ts'
 import type { ModulesRepository } from '../repositories/modules-repository.ts'
