@@ -64,6 +64,13 @@
       "when": 1765738639276,
       "tag": "0008_uneven_enchantress",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1766765030538,
+      "tag": "0009_dark_nova",
+      "breakpoints": true
     }
   ]
 }

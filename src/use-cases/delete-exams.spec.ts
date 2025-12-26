@@ -2,14 +2,10 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { ExamsNotFoundError } from '../_erros/exams-not-found-error.ts'
 import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
 import { ModulesNotFoundError } from '../_erros/modules-not-found-error.ts'
-import { PlantNotFoundError } from '../_erros/plant-not-found-error.ts'
-import { FakeStorageProvider } from '../repositories/disk-storage/fake-storage-provider.ts'
 import { InMemoryExamsRepository } from '../repositories/in-memory/in-memory-exams-repository.ts'
 import { InMemoryJourneysRepository } from '../repositories/in-memory/in-memory-journeys-repository.ts'
 import { InMemoryModulesRepository } from '../repositories/in-memory/in-memory-modules-repository.ts'
-import { InMemoryPlantsRepository } from '../repositories/in-memory/in-memory-plants-repository.ts'
 import { DeleteExamsUseCase } from './delete-exams.ts'
-import { DeleteJourneysUseCase } from './delete-journeys.ts'
 
 let inMemoryJourneysRepository: InMemoryJourneysRepository
 let inMemoryModulesRepository: InMemoryModulesRepository

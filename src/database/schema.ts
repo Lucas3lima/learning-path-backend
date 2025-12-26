@@ -215,3 +215,43 @@ export const moduleContents = pgTable(
   },
   (table) => [uniqueIndex().on(table.moduleId, table.order)],
 )
+
+
+export const examQuestions = pgTable(
+  'exam_questions',
+  {
+    id: uuid().primaryKey().defaultRandom(),
+
+    title: text().notNull(), // enunciado da pergunta
+    order: integer().notNull(), // ordem dentro da prova
+
+    examId: uuid()
+      .notNull()
+      .references(() => exams.id, { onDelete: 'cascade' }),
+
+    created_at: timestamp({ withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex().on(table.examId, table.order), // ordem única por prova
+  ],
+)
+
+export const examAnswers = pgTable(
+  'exam_answers',
+  {
+    id: uuid().primaryKey().defaultRandom(),
+
+    title: text().notNull(), // texto da resposta
+    isCorrect: boolean().notNull().default(false),
+    order: integer().notNull(),
+
+    questionId: uuid()
+      .notNull()
+      .references(() => examQuestions.id, { onDelete: 'cascade' }),
+
+    created_at: timestamp({ withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex().on(table.questionId, table.order),
+  ],
+)
