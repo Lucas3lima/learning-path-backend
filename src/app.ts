@@ -19,6 +19,8 @@ import { createAccountRoute } from './routes/auth/create-account.ts'
 import { getProfileRoute } from './routes/auth/get-profile.ts'
 import { selectPlantRoute } from './routes/auth/select-plant.ts'
 import { createExams } from './routes/exams/create-exams.ts'
+import { deleteExams } from './routes/exams/delete-exams.ts'
+import { editExams } from './routes/exams/edit-exams.ts'
 import { createJourneys } from './routes/journeys/create-journeys.ts'
 import { deleteJourneys } from './routes/journeys/delete-journeys.ts'
 import { editJourneys } from './routes/journeys/edit-journeys.ts'
@@ -123,6 +125,8 @@ app.register(deleteLessons)
 
 // EXAMS
 app.register(createExams)
+app.register(editExams)
+app.register(deleteExams)
 
 app.setErrorHandler((error, request, reply) => {
   // 🔹 Se for erro de validação do Zod

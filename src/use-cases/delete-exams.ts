@@ -1,35 +1,31 @@
+import { ExamsNotFoundError } from '../_erros/exams-not-found-error.ts'
 import { GenericDeletingError } from '../_erros/generic-deleting-error.ts'
 import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
-import { LessonsNotFoundError } from '../_erros/lessons-not-found-error.ts'
 import { ModulesNotFoundError } from '../_erros/modules-not-found-error.ts'
 import { PlantNotSelectedError } from '../_erros/plant-not-selected-error.ts'
+import type { ExamsRepository } from '../repositories/exams-repository.ts'
 import type { JourneysRepository } from '../repositories/journeys-repository.ts'
-import type { LessonsRepository } from '../repositories/lessons-repository.ts'
 import type { ModulesRepository } from '../repositories/modules-repository.ts'
-import type { StorageProvider } from '../repositories/storage-provider.ts'
 
-interface DeleteLessonsUseCaseRequest {
+interface DeleteExamsUseCaseRequest {
   id: string
   journeySlug: string
   moduleSlug: string
   plantId?: string
 }
 
-export class DeleteLessonsUseCase {
+export class DeleteExamsUseCase {
   private journeysRepository: JourneysRepository
   private modulesRepository: ModulesRepository
-  private lessonsRepository: LessonsRepository
-  private storageProvider: StorageProvider
+  private examsRepository: ExamsRepository
   constructor(
     journeysRepository: JourneysRepository,
     modulesRepository: ModulesRepository,
-    lessonsRepository: LessonsRepository,
-    storageProvider: StorageProvider,
+    examsRepository: ExamsRepository,
   ) {
     this.journeysRepository = journeysRepository
     this.modulesRepository = modulesRepository
-    this.lessonsRepository = lessonsRepository
-    this.storageProvider = storageProvider
+    this.examsRepository = examsRepository
   }
 
   async execute({
@@ -37,7 +33,7 @@ export class DeleteLessonsUseCase {
     plantId,
     journeySlug,
     moduleSlug,
-  }: DeleteLessonsUseCaseRequest) {
+  }: DeleteExamsUseCaseRequest) {
     if (!plantId) {
       throw new PlantNotSelectedError()
     }
@@ -60,21 +56,16 @@ export class DeleteLessonsUseCase {
       throw new ModulesNotFoundError()
     }
 
-    const lesson = await this.lessonsRepository.findByIdAndModuleId(
-      id,
-      module.id,
-    )
+    const exam = await this.examsRepository.findByIdAndModuleId(id, module.id)
 
-    if (!lesson) {
-      throw new LessonsNotFoundError()
+    if (!exam) {
+      throw new ExamsNotFoundError()
     }
-    if (lesson.pdf_url) {
-      await this.storageProvider.deleteFile(lesson.pdf_url)
-    }
-    const deleted = await this.lessonsRepository.delete(id)
+
+    const deleted = await this.examsRepository.delete(id)
 
     if (!deleted) {
-      throw new GenericDeletingError('Aula não pôde ser deletada.')
+      throw new GenericDeletingError('Prova não pôde ser deletada.')
     }
 
     return {
