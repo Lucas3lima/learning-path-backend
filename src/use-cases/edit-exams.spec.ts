@@ -1,8 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { ExamsAlreadyExistsError } from '../_erros/exams-already-exists-error.ts'
 import { ExamsNotFoundError } from '../_erros/exams-not-found-error.ts'
-import { GenericEditingError } from '../_erros/generic-editing-error.ts'
-import { JourneysAlreadyExistsError } from '../_erros/journeys-already-exists-error.ts'
 import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
 import { ModulesNotFoundError } from '../_erros/modules-not-found-error.ts'
 import { InMemoryExamsRepository } from '../repositories/in-memory/in-memory-exams-repository.ts'
