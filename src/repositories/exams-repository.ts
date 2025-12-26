@@ -4,6 +4,13 @@ import type { exams } from '../database/schema.ts'
 export type Exams = InferSelectModel<typeof exams>
 export type CreateExamsInput = InferInsertModel<typeof exams>
 
+export type EditExamsInput = {
+  id: string
+  title?: string
+  slug?: string
+  description?: string
+}
+
 export interface ExamsRepository {
   findById(id: string): Promise<Exams | null>
   findBySlugAndModuleId(slug: string, moduleId: string): Promise<Exams | null>
@@ -12,4 +19,5 @@ export interface ExamsRepository {
   create(data: CreateExamsInput): Promise<Exams>
   delete(id: string): Promise<boolean>
   findManyByIds(ids: string[]): Promise<Exams[]>
+  edit(data: EditExamsInput): Promise<Exams | null>
 }

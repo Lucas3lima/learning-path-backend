@@ -72,7 +72,6 @@ export class CreateExamsUseCase {
       throw new ExamsAlreadyExistsError()
     }
 
-
     const exam = await this.examsRepository.create({
       title,
       slug,
@@ -83,7 +82,7 @@ export class CreateExamsUseCase {
     const nextOrder = await this.moduleContentsRepository.nextOrder(
       existingModules.id,
     )
-    
+
     const moduleContent = await this.moduleContentsRepository.create({
       moduleId: existingModules.id,
       type: 'exam',

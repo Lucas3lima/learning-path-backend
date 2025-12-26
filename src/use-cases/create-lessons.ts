@@ -120,18 +120,20 @@ export class CreateLessonsUseCase {
       moduleId: existingModules.id,
     })
 
-    const nextOrder = await this.moduleContentsRepository.nextOrder(existingModules.id)
+    const nextOrder = await this.moduleContentsRepository.nextOrder(
+      existingModules.id,
+    )
 
     const moduleContent = await this.moduleContentsRepository.create({
       moduleId: existingModules.id,
       type: 'lesson',
       lessonId: lesson.id,
-      order: nextOrder
+      order: nextOrder,
     })
 
     return {
       lesson,
-      moduleContent
+      moduleContent,
     }
   }
 }

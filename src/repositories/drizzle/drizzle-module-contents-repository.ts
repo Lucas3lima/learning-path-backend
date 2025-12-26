@@ -25,11 +25,8 @@ export class DrizzleModuleContentsRepository
       .select()
       .from(moduleContents)
       .where(
-        and(
-           eq(moduleContents.id, id),
-           eq(moduleContents.moduleId, moduleId)
-        )
-    )
+        and(eq(moduleContents.id, id), eq(moduleContents.moduleId, moduleId)),
+      )
 
     if (!moduleContent) {
       return null
@@ -49,21 +46,21 @@ export class DrizzleModuleContentsRepository
   }
   async delete(id: string) {
     const result = await db
-        .delete(moduleContents)
-        .where(eq(moduleContents.id, id))
-        .returning({ id: moduleContents.id })
+      .delete(moduleContents)
+      .where(eq(moduleContents.id, id))
+      .returning({ id: moduleContents.id })
 
     // Se deletou, result[0] existe
     return result.length > 0
   }
 
   async nextOrder(moduleId: string) {
-      const [{ nextOrder }] = await db
-        .select({
-          nextOrder: sql<number>`COALESCE(MAX(${moduleContents.order}) + 1, 1)`,
-        })
-        .from(moduleContents)
-        .where(eq(moduleContents.moduleId, moduleId))
-      return nextOrder
-    }
+    const [{ nextOrder }] = await db
+      .select({
+        nextOrder: sql<number>`COALESCE(MAX(${moduleContents.order}) + 1, 1)`,
+      })
+      .from(moduleContents)
+      .where(eq(moduleContents.moduleId, moduleId))
+    return nextOrder
+  }
 }

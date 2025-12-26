@@ -136,7 +136,6 @@ describe('Create Exams Use Case', () => {
   })
 
   it('Should allow creating exams with the same title in different modules', async () => {
-
     await inMemoryJourneysRepository.create({
       id: '01',
       title: 'Journey',
@@ -191,7 +190,6 @@ describe('Create Exams Use Case', () => {
     expect(exam1.id).not.toBe(exam2.id)
   })
   it('Should allow creating exams with the same title in different modules', async () => {
-
     await inMemoryJourneysRepository.create({
       id: '01',
       title: 'Journey',
@@ -247,7 +245,7 @@ describe('Create Exams Use Case', () => {
   })
 
   it('Should increment order automatically in moduleContents', async () => {
-      await inMemoryJourneysRepository.create({
+    await inMemoryJourneysRepository.create({
       id: '01',
       title: 'Journey',
       slug: 'journey',
@@ -285,8 +283,5 @@ describe('Create Exams Use Case', () => {
     expect(mContent2.type).toBe('exam')
     expect(mContent1.order).toBe(1)
     expect(mContent2.order).toBe(2)
-
   })
-
-
 })

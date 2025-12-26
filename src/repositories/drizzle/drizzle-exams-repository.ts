@@ -2,8 +2,9 @@ import { and, eq, inArray } from 'drizzle-orm'
 import { db } from '../../database/client.ts'
 import { exams } from '../../database/schema.ts'
 import type {
-    CreateExamsInput,
-    ExamsRepository
+  CreateExamsInput,
+  EditExamsInput,
+  ExamsRepository
 } from '../exams-repository.ts'
 
 export class DrizzleExamsRepository implements ExamsRepository {
@@ -17,12 +18,10 @@ export class DrizzleExamsRepository implements ExamsRepository {
     return exam
   }
   async findBySlugAndModuleId(slug: string, moduleId: string) {
-    const [exam] = await db.select().from(exams).where(
-        and(
-            eq(exams.slug, slug),
-            eq(exams.moduleId, moduleId)
-        )
-    )
+    const [exam] = await db
+      .select()
+      .from(exams)
+      .where(and(eq(exams.slug, slug), eq(exams.moduleId, moduleId)))
 
     if (!exam) {
       return null
@@ -31,12 +30,10 @@ export class DrizzleExamsRepository implements ExamsRepository {
     return exam
   }
   async findByIdAndModuleId(id: string, moduleId: string) {
-    const [exam] = await db.select().from(exams).where(
-        and(
-            eq(exams.id, id),
-            eq(exams.moduleId, moduleId)
-        )
-    )
+    const [exam] = await db
+      .select()
+      .from(exams)
+      .where(and(eq(exams.id, id), eq(exams.moduleId, moduleId)))
 
     if (!exam) {
       return null
@@ -49,30 +46,38 @@ export class DrizzleExamsRepository implements ExamsRepository {
   }
   async create(data: CreateExamsInput) {
     const [lesson] = await db.insert(exams).values(data).returning()
-    
+
     return lesson
   }
   async delete(id: string) {
     const result = await db
-        .delete(exams)
-        .where(
-            eq(exams.id, id),
-        )
-        .returning({ id: exams.id })
-    
+      .delete(exams)
+      .where(eq(exams.id, id))
+      .returning({ id: exams.id })
+
     // Se deletou, result[0] existe
     return result.length > 0
   }
 
-  async findManyByIds(ids: string[]){
-      if(ids.length === 0) {
-        return []
-      }
-  
-      const result = await db.select()
-        .from(exams)
-        .where(inArray(exams.id,ids))
-  
-      return result
+  async findManyByIds(ids: string[]) {
+    if (ids.length === 0) {
+      return []
     }
+
+    const result = await db.select().from(exams).where(inArray(exams.id, ids))
+
+    return result
+  }
+
+  async edit(data: EditExamsInput) {
+    const { id, ...fields } = data
+
+    const [updated] = await db
+      .update(exams)
+      .set(fields)
+      .where(eq(exams.id, id))
+      .returning()
+
+    return updated ?? null
+  }
 }

@@ -71,14 +71,15 @@ export class DrizzleLessonsRepository implements LessonsRepository {
     // Se deletou, result[0] existe
     return result.length > 0
   }
-  async findManyByIds(ids: string[]){
-    if(ids.length === 0) {
+  async findManyByIds(ids: string[]) {
+    if (ids.length === 0) {
       return []
     }
 
-    const result = await db.select()
+    const result = await db
+      .select()
       .from(lessons)
-      .where(inArray(lessons.id,ids))
+      .where(inArray(lessons.id, ids))
 
     return result
   }

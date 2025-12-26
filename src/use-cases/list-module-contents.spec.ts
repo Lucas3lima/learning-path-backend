@@ -29,7 +29,7 @@ describe('Get all journeys Use Case', () => {
     )
   })
 
-  it('Get all lessons in module', async () => { 
+  it('Get all lessons in module', async () => {
     await inMemoryJourneysRepository.create({
       id: '01',
       title: 'journey',
@@ -60,7 +60,7 @@ describe('Get all journeys Use Case', () => {
       type: 'lesson',
       moduleId: '01',
       order: 1,
-      lessonId: '01'
+      lessonId: '01',
     })
 
     await inMemoryLessonsRepository.create({
@@ -76,16 +76,15 @@ describe('Get all journeys Use Case', () => {
       type: 'lesson',
       moduleId: '01',
       order: 2,
-      lessonId: '02'
+      lessonId: '02',
     })
-
 
     await inMemoryExamsRepository.create({
       id: '01',
       title: 'Prova final',
       slug: 'prova-final',
       moduleId: '01',
-      description: 'Descrição da prova'
+      description: 'Descrição da prova',
     })
 
     await inMemoryModuleContentsRepository.create({
@@ -93,14 +92,13 @@ describe('Get all journeys Use Case', () => {
       type: 'exam',
       moduleId: '01',
       order: 3,
-      examId: '01'
+      examId: '01',
     })
     const response = await sut.execute({
       plantId: '01',
       journeySlug: 'journey',
       moduleSlug: 'module-01',
     })
-
 
     expect(response).toEqual(
       expect.arrayContaining([
@@ -113,7 +111,7 @@ describe('Get all journeys Use Case', () => {
           video_url: 'www.youtube.com',
           pdf_url: null,
           order: 1,
-          type: 'lesson'
+          type: 'lesson',
         }),
         expect.objectContaining({
           id: '02',
@@ -124,7 +122,7 @@ describe('Get all journeys Use Case', () => {
           video_url: null,
           pdf_url: 'uploads/plant/journey/module/exemplo.pdf',
           order: 2,
-          type: 'lesson'
+          type: 'lesson',
         }),
         expect.objectContaining({
           id: '01',
@@ -135,7 +133,7 @@ describe('Get all journeys Use Case', () => {
           video_url: null,
           pdf_url: null,
           order: 3,
-          type: 'exam'
+          type: 'exam',
         }),
       ]),
     )

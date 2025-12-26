@@ -72,25 +72,28 @@ export class ListModuleContentsUseCase {
       throw new NotFoundError('Módulo não encontrado!')
     }
 
-    const moduleContents = await this.moduleContentsRepository.findByModuleId(module.id)
-
+    const moduleContents = await this.moduleContentsRepository.findByModuleId(
+      module.id,
+    )
 
     const lessonIds = moduleContents
       .filter((item) => item.type === 'lesson' && item.lessonId)
-      .map(
-        (item) => item.lessonId!
-      )
+      .map((item) => item.lessonId!)
 
-      const examIds = moduleContents
+    const examIds = moduleContents
       .filter((item) => item.type === 'exam' && item.examId)
       .map((item) => item.examId!)
-      
-      const lessons = lessonIds.length ? await this.lessonsRepository.findManyByIds(lessonIds) : []
-      
-      const exams  = lessonIds.length ? await this.examsRepository.findManyByIds(examIds) : []
-      
-      const lessonsMap = new Map(lessons.map((l) => [l.id, l]))
-      const examsMap = new Map(exams.map((e) => [e.id, e]))
+
+    const lessons = lessonIds.length
+      ? await this.lessonsRepository.findManyByIds(lessonIds)
+      : []
+
+    const exams = lessonIds.length
+      ? await this.examsRepository.findManyByIds(examIds)
+      : []
+
+    const lessonsMap = new Map(lessons.map((l) => [l.id, l]))
+    const examsMap = new Map(exams.map((e) => [e.id, e]))
 
     const contents: ListModuleContentUseCaseResponse[] = moduleContents.map(
       (item) => {
@@ -135,6 +138,5 @@ export class ListModuleContentsUseCase {
     )
 
     return contents.sort((a, b) => a.order - b.order)
-
   }
 }

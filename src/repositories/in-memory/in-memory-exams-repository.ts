@@ -1,4 +1,9 @@
-import type { CreateExamsInput, Exams, ExamsRepository } from '../exams-repository.ts'
+import type {
+  CreateExamsInput,
+  EditExamsInput,
+  Exams,
+  ExamsRepository,
+} from '../exams-repository.ts'
 
 export class InMemoryExamsRepository implements ExamsRepository {
   public items: Exams[] = []
@@ -55,28 +60,29 @@ export class InMemoryExamsRepository implements ExamsRepository {
     return exam
   }
 
-  // async edit(data: EditLessonInput) {
-  //   const lessonIndex = this.items.findIndex((item) => item.id === data.id)
+  async edit(data: EditExamsInput) {
+    const examsIndex = this.items.findIndex(
+      (item) => item.id === data.id,
+    )
 
-  //   if (lessonIndex === -1) {
-  //     return null
-  //   }
+    if (examsIndex === -1) {
+      return null
+    }
 
-  //   const lesson = this.items[lessonIndex]
+    const exam = this.items[examsIndex]
 
-  //   const updatedLesson: Lessons = {
-  //     ...lesson,
-  //     title: data.title ?? lesson.title,
-  //     slug: data.slug ?? lesson.slug,
-  //     content: data.content ?? lesson.content,
-  //     video_url: data.video_url ?? lesson.video_url,
-  //     pdf_url: data.pdf_url ?? lesson.pdf_url,
-  //     updated_at: new Date(),
-  //   }
-  //   this.items[lessonIndex] = updatedLesson
+    const updatedExams: Exams = {
+      ...exam,
+      title: data.title ?? exam.title,
+      slug: data.slug ?? exam.slug,
+      description: data.description ?? exam.description,
+      updated_at: new Date(),
+    }
 
-  //   return updatedLesson
-  // }
+    this.items[examsIndex] = updatedExams
+
+    return updatedExams
+  }
   async delete(id: string) {
     const index = this.items.findIndex((item) => item.id === id)
 
@@ -89,13 +95,11 @@ export class InMemoryExamsRepository implements ExamsRepository {
     return true
   }
 
-  async findManyByIds(ids: string[]){
-
-    if(ids.length === 0){
+  async findManyByIds(ids: string[]) {
+    if (ids.length === 0) {
       return []
     }
 
     return this.items.filter((exam) => ids.includes(exam.id))
-
   }
 }
