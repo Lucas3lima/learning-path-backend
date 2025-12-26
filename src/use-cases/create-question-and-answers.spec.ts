@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { ExamAnswersLimitError } from '../_erros/exam-answers-limit-error.ts'
-import { ExamsAlreadyExistsError } from '../_erros/exams-already-exists-error.ts'
 import { ExamsNotFoundError } from '../_erros/exams-not-found-error.ts'
 import { InvalidCorrectExamAnswerError } from '../_erros/invalid-correct-exam-answer-error.ts'
 import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
