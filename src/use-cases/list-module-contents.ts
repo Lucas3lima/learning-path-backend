@@ -1,5 +1,7 @@
 import { ExamsNotFoundError } from '../_erros/exams-not-found-error.ts'
+import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
 import { LessonsNotFoundError } from '../_erros/lessons-not-found-error.ts'
+import { ModulesNotFoundError } from '../_erros/modules-not-found-error.ts'
 import { NotFoundError } from '../_erros/not-found-error.ts'
 import { PlantNotSelectedError } from '../_erros/plant-not-selected-error.ts'
 import type { ExamsRepository } from '../repositories/exams-repository.ts'
@@ -60,7 +62,7 @@ export class ListModuleContentsUseCase {
     )
 
     if (!journey) {
-      throw new NotFoundError('Trilha não encontrada!')
+      throw new JourneysNotFoundError()
     }
 
     const module = await this.modulesRepository.findBySlugAndJourneyId(
@@ -69,7 +71,7 @@ export class ListModuleContentsUseCase {
     )
 
     if (!module) {
-      throw new NotFoundError('Módulo não encontrado!')
+      throw new ModulesNotFoundError()
     }
 
     const moduleContents = await this.moduleContentsRepository.findByModuleId(
