@@ -63,7 +63,7 @@ Tecnologias: **Node.js + Fastify + Drizzle ORM + JWT**
 
 ## 📝 ASSESSMENTS (PROVAS)
 - [x] Criar prova por módulo
-- [ ] Criar questões e alternativas
+- [x] Criar questões e alternativas
 - [ ] Enviar respostas
 - [ ] Calcular nota
 - [ ] Permitir 3 tentativas

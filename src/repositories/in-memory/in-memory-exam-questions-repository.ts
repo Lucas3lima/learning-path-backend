@@ -25,6 +25,9 @@ export class InMemoryExamQuestionsRepository
   async findById(id: string) {
     return this.items.find((item) => item.id === id) ?? null
   }
+  async findByIdAndExamId(id: string, examId: string) {
+    return this.items.find((item) => item.id === id && item.examId === examId) ?? null
+  }
 
   async findByExamId(examId: string) {
     return this.items

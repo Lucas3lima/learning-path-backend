@@ -36,5 +36,10 @@ export interface ExamQuestionsRepository {
     id: string,
   ): Promise<boolean>
 
+  findByIdAndExamId(
+    id: string,
+    examId: string
+  ): Promise<ExamQuestions | null>
+
   nextOrder(examId: string): Promise<number>
 }

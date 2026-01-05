@@ -35,6 +35,7 @@ import { deleteModules } from './routes/modules/delete-modules.ts'
 import { editModules } from './routes/modules/edit-modules.ts'
 import { ListModuleLessonsRoute } from './routes/modules/list-module-contents.ts'
 import { createQuestionsAndAnswers } from './routes/questions/create-questions-and-answers.ts'
+import { EditAnswers } from './routes/questions/edit-answers.ts'
 import { getUsersRoute } from './routes/users/get-users.ts'
 
 const app = fastify({
@@ -131,6 +132,7 @@ app.register(deleteExams)
 
 // QUESTIONS
 app.register(createQuestionsAndAnswers)
+app.register(EditAnswers)
 
 app.setErrorHandler((error, request, reply) => {
   // 🔹 Se for erro de validação do Zod

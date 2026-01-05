@@ -24,6 +24,24 @@ export class DrizzleExamQuestionsRepository implements ExamQuestionsRepository {
       .where(eq(examQuestions.examId, examId))
       .orderBy(examQuestions.order)
   }
+  async findByIdAndExamId(id:string ,examId: string) {
+    const [examQuestion] = await db
+      .select()
+      .from(examQuestions)
+      .where(
+        and(
+          eq(examQuestions.id, id),
+          eq(examQuestions.examId, examId),
+
+        )
+      )
+
+    if (!examQuestion) {
+      return null
+    }
+
+    return examQuestion
+  }
   async findByExamIdAndOrder(examId: string, order: number) {
     const [examQuestion] = await db
       .select()
