@@ -1,44 +1,48 @@
-import { ExamsAlreadyExistsError } from '../_erros/exams-already-exists-error.ts'
 import { ExamsNotFoundError } from '../_erros/exams-not-found-error.ts'
+import { ExamsQuestionNotFoundError } from '../_erros/exams-question-not-found-error.ts'
 import { GenericEditingError } from '../_erros/generic-editing-error.ts'
 import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
 import { ModulesNotFoundError } from '../_erros/modules-not-found-error.ts'
 import { PlantNotSelectedError } from '../_erros/plant-not-selected-error.ts'
+import type { ExamQuestionsRepository } from '../repositories/exam-questions-repository.ts'
 import type { ExamsRepository } from '../repositories/exams-repository.ts'
 import type { JourneysRepository } from '../repositories/journeys-repository.ts'
 import type { ModulesRepository } from '../repositories/modules-repository.ts'
-import { createSlug } from '../utils/create-slug.ts'
 
-interface EditExamsUseCaseRequest {
+interface EditExamQuestionUseCaseRequest {
   plantId?: string
   journeySlug: string
   moduleSlug: string
-  id: string
-  title?: string
-  description?: string
+  examSlug: string
+  questionId: string
+  title: string
 }
 
-export class EditExamsUseCase {
+export class EditExamQuestionUseCase {
   private journeysRepository: JourneysRepository
   private modulesRepository: ModulesRepository
   private examsRepository: ExamsRepository
+  private examQuestionsRepository: ExamQuestionsRepository
   constructor(
     journeysRepository: JourneysRepository,
     modulesRepository: ModulesRepository,
     examsRepository: ExamsRepository,
+    examQuestionsRepository: ExamQuestionsRepository,
   ) {
     this.journeysRepository = journeysRepository
     this.modulesRepository = modulesRepository
     this.examsRepository = examsRepository
+    this.examQuestionsRepository = examQuestionsRepository
   }
+
   async execute({
-    id,
-    title,
-    description,
     plantId,
     journeySlug,
     moduleSlug,
-  }: EditExamsUseCaseRequest) {
+    examSlug,
+    questionId,
+    title,
+  }: EditExamQuestionUseCaseRequest) {
     if (!plantId) {
       throw new PlantNotSelectedError()
     }
@@ -61,40 +65,35 @@ export class EditExamsUseCase {
       throw new ModulesNotFoundError()
     }
 
-    const exams = await this.examsRepository.findByIdAndModuleId(id, module.id)
+    const exam = await this.examsRepository.findBySlugAndModuleId(
+      examSlug,
+      module.id,
+    )
 
-    if (!exams) {
+    if (!exam) {
       throw new ExamsNotFoundError()
     }
 
-    let slug: string | undefined
+    const question = await this.examQuestionsRepository.findByIdAndExamId(
+      questionId,
+      exam.id,
+    )
 
-    if (title) {
-      slug = createSlug(title)
-
-      const existingExams = await this.examsRepository.findBySlugAndModuleId(
-        slug,
-        module.id,
-      )
-
-      if (existingExams) {
-        throw new ExamsAlreadyExistsError()
-      }
+    if (!question) {
+      throw new ExamsQuestionNotFoundError()
     }
 
-    const exam = await this.examsRepository.edit({
-      id,
+    const questionEdited = await this.examQuestionsRepository.edit({
+      id: question.id,
       title,
-      slug,
-      description,
     })
 
-    if (!exam) {
-      throw new GenericEditingError('Prova não pôde ser atualizada.')
+    if (!questionEdited) {
+      throw new GenericEditingError('Não foi possível editar a questão.')
     }
 
     return {
-      exam,
+      questionEdited,
     }
   }
 }

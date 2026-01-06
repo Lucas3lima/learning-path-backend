@@ -12,21 +12,13 @@ export type EditExamAnswersInput = {
 }
 
 export interface ExamAnswersRepository {
-  createMany(
-    data: CreateExamAnswersInput[],
-  ): Promise<ExamAnswers[]>
+  createMany(data: CreateExamAnswersInput[]): Promise<ExamAnswers[]>
 
-  findByQuestionId(
-    questionId: string,
-  ): Promise<ExamAnswers[]>
+  findByQuestionId(questionId: string): Promise<ExamAnswers[]>
 
-  edit(
-    data: EditExamAnswersInput,
-  ): Promise<ExamAnswers | null>
+  edit(data: EditExamAnswersInput): Promise<ExamAnswers | null>
 
-  deleteByQuestionId(
-    questionId: string,
-  ): Promise<boolean>
+  deleteByQuestionId(questionId: string): Promise<boolean>
 
   nextOrder(questionId: string): Promise<number>
 }

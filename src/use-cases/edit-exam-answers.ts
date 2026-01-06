@@ -118,7 +118,8 @@ export class EditExamAnswersUseCase {
       questionId: question.id,
     }))
 
-    const createdAnswers = await this.examAnswersRepository.createMany(answersWithOrder)
+    const createdAnswers =
+      await this.examAnswersRepository.createMany(answersWithOrder)
 
     return {
       createdAnswers,

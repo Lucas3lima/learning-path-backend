@@ -1,26 +1,23 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
-import z, { uuid } from 'zod'
-import { ExamAnswersLimitError } from '../../_erros/exam-answers-limit-error.ts'
+import z from 'zod'
 import { ExamsNotFoundError } from '../../_erros/exams-not-found-error.ts'
 import { ExamsQuestionNotFoundError } from '../../_erros/exams-question-not-found-error.ts'
-import { GenericDeletingError } from '../../_erros/generic-deleting-error.ts'
-import { InvalidCorrectExamAnswerError } from '../../_erros/invalid-correct-exam-answer-error.ts'
+import { GenericEditingError } from '../../_erros/generic-editing-error.ts'
 import { JourneysNotFoundError } from '../../_erros/journeys-not-found-error.ts'
 import { ModulesNotFoundError } from '../../_erros/modules-not-found-error.ts'
 import { PlantNotSelectedError } from '../../_erros/plant-not-selected-error.ts'
-import { DrizzleExamAnswersRepository } from '../../repositories/drizzle/drizzle-exam-answers-repository.ts'
 import { DrizzleExamQuestionsRepository } from '../../repositories/drizzle/drizzle-exam-questions-repository.ts'
 import { DrizzleExamsRepository } from '../../repositories/drizzle/drizzle-exams-repository.ts'
 import { DrizzleJourneysRepository } from '../../repositories/drizzle/drizzle-journeys-repository.ts'
 import { DrizzleModulesRepository } from '../../repositories/drizzle/drizzle-modules-repository.ts'
-import { EditExamAnswersUseCase } from '../../use-cases/edit-exam-answers.ts'
+import { EditExamQuestionUseCase } from '../../use-cases/edit-exam-question.ts'
 import { checkPlantRole } from '../../utils/check-plant-role.ts'
 import { getAuthenticatedUser } from '../../utils/get-authenticate-user.ts'
 import { checkRequestJWT } from '../_hooks/check-request-jwt.ts'
 import { requireFullSession } from '../_hooks/requireFullSession.ts'
-export const EditAnswers: FastifyPluginAsyncZod = async (app) => {
+export const EditQuestions: FastifyPluginAsyncZod = async (app) => {
   app.put(
-    '/journeys/:journeySlug/modules/:moduleSlug/exams/:examSlug/questions/:questionId/answers',
+    '/journeys/:journeySlug/modules/:moduleSlug/exams/:examSlug/questions/:questionId/questions',
     {
       preHandler: [
         checkRequestJWT,
@@ -29,7 +26,7 @@ export const EditAnswers: FastifyPluginAsyncZod = async (app) => {
       ],
       schema: {
         tags: ['questions'],
-        summary: 'Edit answers',
+        summary: 'Edit questions',
         params: z.object({
           journeySlug: z.string(),
           moduleSlug: z.string(),
@@ -37,28 +34,12 @@ export const EditAnswers: FastifyPluginAsyncZod = async (app) => {
           questionId: z.uuid(),
         }),
         body: z.object({
-          answers: z
-            .array(
-              z.object({
-                title: z.string().trim().min(1, 'Título é obrigatório'),
-                isCorrect: z.boolean(),
-              }),
-            )
-            .refine((answers) => answers.length >= 2 && answers.length <= 5, {
-              message: 'A pergunta deve ter entre 2 e 5 respostas',
-            }),
+          title: z.string(),
         }),
         response: {
           200: z.object({
             questionId: z.uuid(),
-            answers: z.array(
-              z.object({
-                id: uuid(),
-                title: z.string(),
-                isCorrect: z.boolean(),
-                order: z.number(),
-              }),
-            ),
+            title: z.string(),
           }),
           400: z.object({
             message: z.string(),
@@ -74,7 +55,7 @@ export const EditAnswers: FastifyPluginAsyncZod = async (app) => {
     },
     async (request, reply) => {
       const user = getAuthenticatedUser(request)
-      const { answers } = request.body
+      const { title } = request.body
       const { journeySlug, moduleSlug, examSlug, questionId } = request.params
 
       try {
@@ -82,41 +63,27 @@ export const EditAnswers: FastifyPluginAsyncZod = async (app) => {
         const modulesRepo = new DrizzleModulesRepository()
         const examsRepo = new DrizzleExamsRepository()
         const examQuestion = new DrizzleExamQuestionsRepository()
-        const examAnswers = new DrizzleExamAnswersRepository()
-        const sut = new EditExamAnswersUseCase(
+        const sut = new EditExamQuestionUseCase(
           journeysRepo,
           modulesRepo,
           examsRepo,
           examQuestion,
-          examAnswers,
         )
 
-        const { createdAnswers } = await sut.execute({
+        const { questionEdited } = await sut.execute({
           plantId: user.plantId,
           journeySlug,
           moduleSlug,
           examSlug,
           questionId,
-          answers,
+          title,
         })
 
-        const response = {
-          questionId,
-          answers: createdAnswers.map((answer) => ({
-            id: answer.id,
-            title: answer.title,
-            isCorrect: answer.isCorrect,
-            order: answer.order,
-          })),
-        }
-
-        reply.status(200).send(response)
+        reply
+          .status(200)
+          .send({ questionId: questionEdited.id, title: questionEdited.title })
       } catch (err) {
-        if (
-          err instanceof PlantNotSelectedError ||
-          err instanceof ExamAnswersLimitError ||
-          err instanceof InvalidCorrectExamAnswerError
-        ) {
+        if (err instanceof PlantNotSelectedError) {
           reply.status(400).send({ message: err.message })
         }
 
@@ -129,7 +96,7 @@ export const EditAnswers: FastifyPluginAsyncZod = async (app) => {
           reply.status(404).send({ message: err.message })
         }
 
-        if (err instanceof GenericDeletingError) {
+        if (err instanceof GenericEditingError) {
           reply.status(500).send({ message: err.message })
         }
 

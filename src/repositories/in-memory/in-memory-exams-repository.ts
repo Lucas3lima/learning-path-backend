@@ -61,9 +61,7 @@ export class InMemoryExamsRepository implements ExamsRepository {
   }
 
   async edit(data: EditExamsInput) {
-    const examsIndex = this.items.findIndex(
-      (item) => item.id === data.id,
-    )
+    const examsIndex = this.items.findIndex((item) => item.id === data.id)
 
     if (examsIndex === -1) {
       return null

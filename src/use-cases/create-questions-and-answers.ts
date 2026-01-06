@@ -80,34 +80,36 @@ export class CreateQuestionsAndAnswersUseCase {
     if (!existingExam) {
       throw new ExamsNotFoundError()
     }
-   
-    if(answers.length < 2 || answers.length > 5){
+
+    if (answers.length < 2 || answers.length > 5) {
       throw new ExamAnswersLimitError()
     }
 
     const answersCorrect = answers.filter((item) => item.isCorrect === true)
 
-    if(answersCorrect.length !== 1) {
+    if (answersCorrect.length !== 1) {
       throw new InvalidCorrectExamAnswerError()
     }
 
-    const nextOrderQuestion = await this.examQuestionsRepository.nextOrder(existingExam.id)
-    
+    const nextOrderQuestion = await this.examQuestionsRepository.nextOrder(
+      existingExam.id,
+    )
+
     const question = await this.examQuestionsRepository.create({
       title,
       order: nextOrderQuestion,
-      examId: existingExam.id
+      examId: existingExam.id,
     })
-    
+
     const answersWithOrder = answers.map((answer, index) => ({
       ...answer,
       order: index + 1,
-      questionId: question.id
-
+      questionId: question.id,
     }))
-    
-    const createdAnswers = await this.examAnswersRepository.createMany(answersWithOrder)
-    
+
+    const createdAnswers =
+      await this.examAnswersRepository.createMany(answersWithOrder)
+
     return {
       question,
       createdAnswers,

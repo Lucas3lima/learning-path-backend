@@ -432,7 +432,7 @@ describe('Create Questions and Answers Use Case', () => {
       {
         title: 'Resposta 04',
         isCorrect: true,
-      }
+      },
     ]
 
     await expect(() =>

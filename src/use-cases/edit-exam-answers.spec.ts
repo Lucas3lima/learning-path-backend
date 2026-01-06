@@ -376,7 +376,6 @@ describe('Edit Answers Use Case', () => {
       moduleId: '01',
     })
 
-
     await inMemoryExamQuestionsRepository.create({
       id: '1',
       title: 'Pergunta 01',

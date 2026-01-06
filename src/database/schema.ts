@@ -216,7 +216,6 @@ export const moduleContents = pgTable(
   (table) => [uniqueIndex().on(table.moduleId, table.order)],
 )
 
-
 export const examQuestions = pgTable(
   'exam_questions',
   {
@@ -251,7 +250,5 @@ export const examAnswers = pgTable(
 
     created_at: timestamp({ withTimezone: true }).notNull().defaultNow(),
   },
-  (table) => [
-    uniqueIndex().on(table.questionId, table.order),
-  ],
+  (table) => [uniqueIndex().on(table.questionId, table.order)],
 )

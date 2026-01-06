@@ -61,7 +61,7 @@ export class GetExamsContentUseCase {
     if (!plantId) {
       throw new PlantNotSelectedError()
     }
-    
+
     const journey = await this.journeysRepository.findBySlugAndPlant(
       journeySlug,
       plantId,
@@ -93,22 +93,24 @@ export class GetExamsContentUseCase {
 
     const questionsWithAnswers = await Promise.all(
       questions.map(async (question) => {
-        const answers = await this.examAnswersRepository.findByQuestionId(question.id)
-        
+        const answers = await this.examAnswersRepository.findByQuestionId(
+          question.id,
+        )
+
         return {
           id: question.id,
           title: question.title,
           order: question.order,
           answers: answers
-            .sort((a,b) => a.order - b.order)
+            .sort((a, b) => a.order - b.order)
             .map((answer) => ({
               id: answer.id,
               title: answer.title,
               order: answer.order,
-              isCorrect: answer.isCorrect
-            }))
+              isCorrect: answer.isCorrect,
+            })),
         }
-      })
+      }),
     )
 
     return {
@@ -117,7 +119,7 @@ export class GetExamsContentUseCase {
         title: exam.title,
         slug: exam.slug,
       },
-      questions: questionsWithAnswers.sort((a, b) => a.order - b.order)
+      questions: questionsWithAnswers.sort((a, b) => a.order - b.order),
     }
   }
 }

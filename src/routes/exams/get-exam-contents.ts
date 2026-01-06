@@ -33,36 +33,35 @@ export const GetExamContentsRoute: FastifyPluginAsyncZod = async (app) => {
           examSlug: z.string(),
         }),
         response: {
-        200: z.object({
+          200: z.object({
             exam: z.object({
-            id: z.string(),
-            title: z.string(),
-            slug: z.string(),
+              id: z.string(),
+              title: z.string(),
+              slug: z.string(),
             }),
             questions: z.array(
-            z.object({
+              z.object({
                 id: z.string(),
                 title: z.string(),
                 order: z.number(),
                 answers: z.array(
-                z.object({
+                  z.object({
                     id: z.string(),
                     title: z.string(),
                     order: z.number(),
                     isCorrect: z.boolean(),
-                }),
+                  }),
                 ),
-            }),
+              }),
             ),
-        }),
-        400: z.object({
+          }),
+          400: z.object({
             message: z.string(),
-        }),
-        404: z.object({
+          }),
+          404: z.object({
             message: z.string(),
-        }),
+          }),
         },
-
       },
     },
     async (request, reply) => {

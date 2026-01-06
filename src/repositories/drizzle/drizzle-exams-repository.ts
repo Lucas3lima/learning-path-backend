@@ -4,7 +4,7 @@ import { exams } from '../../database/schema.ts'
 import type {
   CreateExamsInput,
   EditExamsInput,
-  ExamsRepository
+  ExamsRepository,
 } from '../exams-repository.ts'
 
 export class DrizzleExamsRepository implements ExamsRepository {

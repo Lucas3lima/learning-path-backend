@@ -11,35 +11,22 @@ export type EditExamQuestionsInput = {
 }
 
 export interface ExamQuestionsRepository {
-  create(
-    data: CreateExamQuestionsInput,
-  ): Promise<ExamQuestions>
+  create(data: CreateExamQuestionsInput): Promise<ExamQuestions>
 
-  findById(
-    id: string,
-  ): Promise<ExamQuestions | null>
+  findById(id: string): Promise<ExamQuestions | null>
 
-  findByExamId(
-    examId: string,
-  ): Promise<ExamQuestions[]>
+  findByExamId(examId: string): Promise<ExamQuestions[]>
 
   findByExamIdAndOrder(
     examId: string,
     order: number,
   ): Promise<ExamQuestions | null>
 
-  edit(
-    data: EditExamQuestionsInput,
-  ): Promise<ExamQuestions | null>
+  edit(data: EditExamQuestionsInput): Promise<ExamQuestions | null>
 
-  delete(
-    id: string,
-  ): Promise<boolean>
+  delete(id: string): Promise<boolean>
 
-  findByIdAndExamId(
-    id: string,
-    examId: string
-  ): Promise<ExamQuestions | null>
+  findByIdAndExamId(id: string, examId: string): Promise<ExamQuestions | null>
 
   nextOrder(examId: string): Promise<number>
 }

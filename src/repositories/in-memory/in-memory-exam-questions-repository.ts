@@ -26,7 +26,10 @@ export class InMemoryExamQuestionsRepository
     return this.items.find((item) => item.id === id) ?? null
   }
   async findByIdAndExamId(id: string, examId: string) {
-    return this.items.find((item) => item.id === id && item.examId === examId) ?? null
+    return (
+      this.items.find((item) => item.id === id && item.examId === examId) ??
+      null
+    )
   }
 
   async findByExamId(examId: string) {
@@ -35,10 +38,7 @@ export class InMemoryExamQuestionsRepository
       .sort((a, b) => a.order - b.order)
   }
 
-  async findByExamIdAndOrder(
-    examId: string,
-    order: number,
-  ) {
+  async findByExamIdAndOrder(examId: string, order: number) {
     return (
       this.items.find(
         (item) => item.examId === examId && item.order === order,
@@ -66,7 +66,7 @@ export class InMemoryExamQuestionsRepository
     return updated
   }
 
-  async delete(id: string){
+  async delete(id: string) {
     const index = this.items.findIndex((item) => item.id === id)
 
     if (index === -1) {
