@@ -5,6 +5,7 @@ import { ModulesNotFoundError } from '../_erros/modules-not-found-error.ts'
 import { PlantNotSelectedError } from '../_erros/plant-not-selected-error.ts'
 import type { ExamsRepository } from '../repositories/exams-repository.ts'
 import type { JourneysRepository } from '../repositories/journeys-repository.ts'
+import type { LessonProgressRepository } from '../repositories/lesson-progress-repository.ts'
 import type { LessonsRepository } from '../repositories/lessons-repository.ts'
 import type { ModuleContentsRepository } from '../repositories/module-contents-repository.ts'
 import type { ModulesRepository } from '../repositories/modules-repository.ts'
@@ -13,6 +14,7 @@ interface ListModuleContentUseCaseRequest {
   plantId?: string
   journeySlug: string
   moduleSlug: string
+  userId: string
 }
 interface ListModuleContentUseCaseResponse {
   id: string
@@ -24,6 +26,8 @@ interface ListModuleContentUseCaseResponse {
   video_url: string | null
   pdf_url: string | null
   type: 'lesson' | 'exam'
+  completed: boolean
+  locked: boolean
 }
 export class ListModuleContentsUseCase {
   private journeysRepository: JourneysRepository
@@ -31,23 +35,27 @@ export class ListModuleContentsUseCase {
   private lessonsRepository: LessonsRepository
   private examsRepository: ExamsRepository
   private moduleContentsRepository: ModuleContentsRepository
+  private lessonProgressRepository: LessonProgressRepository
   constructor(
     journeysRepository: JourneysRepository,
     modulesRepository: ModulesRepository,
     lessonsRepository: LessonsRepository,
     examsRepository: ExamsRepository,
     moduleContentsRepository: ModuleContentsRepository,
+    lessonProgressRepository: LessonProgressRepository,
   ) {
     this.journeysRepository = journeysRepository
     this.modulesRepository = modulesRepository
     this.lessonsRepository = lessonsRepository
     this.examsRepository = examsRepository
     this.moduleContentsRepository = moduleContentsRepository
+    this.lessonProgressRepository = lessonProgressRepository
   }
   async execute({
     plantId,
     journeySlug,
     moduleSlug,
+    userId,
   }: ListModuleContentUseCaseRequest): Promise<
     ListModuleContentUseCaseResponse[]
   > {
@@ -93,16 +101,38 @@ export class ListModuleContentsUseCase {
       ? await this.examsRepository.findManyByIds(examIds)
       : []
 
+    const lessonProgress =
+      lessonIds.length > 0
+        ? await this.lessonProgressRepository.findManyByUserAndLessonIds(
+            userId,
+            lessonIds,
+          )
+        : []
+
+    const completedLessonsSet = new Set(lessonProgress.map((p) => p.lessonId))
+
+    let canAccessNext = true
+
     const lessonsMap = new Map(lessons.map((l) => [l.id, l]))
     const examsMap = new Map(exams.map((e) => [e.id, e]))
 
-    const contents: ListModuleContentUseCaseResponse[] = moduleContents.map(
-      (item) => {
+    const contents: ListModuleContentUseCaseResponse[] = moduleContents
+      .sort((a, b) => a.order - b.order)
+      .map((item) => {
+        const locked = !canAccessNext
+
         if (item.type === 'lesson') {
           const lesson = lessonsMap.get(item.lessonId!)
 
           if (!lesson) {
             throw new LessonsNotFoundError()
+          }
+
+          const completed = completedLessonsSet.has(lesson.id)
+
+          // se essa aula NÃO foi concluída, trava o próximo
+          if (!completed) {
+            canAccessNext = false
           }
 
           return {
@@ -115,13 +145,21 @@ export class ListModuleContentsUseCase {
             pdf_url: lesson.pdf_url,
             order: item.order,
             type: 'lesson',
+            completed,
+            locked,
           }
         }
 
+        // EXAM
         const exam = examsMap.get(item.examId!)
 
         if (!exam) {
           throw new ExamsNotFoundError()
+        }
+
+        // prova só fica desbloqueada se tudo antes foi concluído
+        if (!canAccessNext) {
+          canAccessNext = false
         }
 
         return {
@@ -134,9 +172,10 @@ export class ListModuleContentsUseCase {
           pdf_url: null,
           order: item.order,
           type: 'exam',
+          completed: false, // 🔥 depois você muda quando implementar aprovação
+          locked,
         }
-      },
-    )
+      })
 
     return contents.sort((a, b) => a.order - b.order)
   }

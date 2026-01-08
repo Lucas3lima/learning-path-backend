@@ -35,6 +35,7 @@ import { createModules } from './routes/modules/create-modules.ts'
 import { deleteModules } from './routes/modules/delete-modules.ts'
 import { editModules } from './routes/modules/edit-modules.ts'
 import { ListModuleLessonsRoute } from './routes/modules/list-module-contents.ts'
+import { createLessonProgress } from './routes/progress/create-lesson-progress.ts'
 import { createQuestionsAndAnswers } from './routes/questions/create-questions-and-answers.ts'
 import { deleteExamQuestions } from './routes/questions/delete-questions.ts'
 import { EditAnswers } from './routes/questions/edit-answers.ts'
@@ -139,6 +140,9 @@ app.register(createQuestionsAndAnswers)
 app.register(EditAnswers)
 app.register(EditQuestions)
 app.register(deleteExamQuestions)
+
+// LESSON PROGRESS
+app.register(createLessonProgress)
 
 app.setErrorHandler((error, request, reply) => {
   // 🔹 Se for erro de validação do Zod

@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { InMemoryExamsRepository } from '../repositories/in-memory/in-memory-exams-repository.ts'
 import { InMemoryJourneysRepository } from '../repositories/in-memory/in-memory-journeys-repository.ts'
+import { InMemoryLessonProgressRepository } from '../repositories/in-memory/in-memory-lesson-progress-repository.ts'
 import { InMemoryLessonsRepository } from '../repositories/in-memory/in-memory-lessons-repository.ts'
 import { InMemoryModuleContentsRepository } from '../repositories/in-memory/in-memory-module-contents-repository.ts'
 import { InMemoryModulesRepository } from '../repositories/in-memory/in-memory-modules-repository.ts'
@@ -11,6 +12,7 @@ let inMemoryModulesRepository: InMemoryModulesRepository
 let inMemoryLessonsRepository: InMemoryLessonsRepository
 let inMemoryExamsRepository: InMemoryExamsRepository
 let inMemoryModuleContentsRepository: InMemoryModuleContentsRepository
+let inMemoryLessonProgressRepository: InMemoryLessonProgressRepository
 let sut: ListModuleContentsUseCase
 
 describe('Get all journeys Use Case', () => {
@@ -20,12 +22,14 @@ describe('Get all journeys Use Case', () => {
     inMemoryLessonsRepository = new InMemoryLessonsRepository()
     inMemoryExamsRepository = new InMemoryExamsRepository()
     inMemoryModuleContentsRepository = new InMemoryModuleContentsRepository()
+    inMemoryLessonProgressRepository = new InMemoryLessonProgressRepository()
     sut = new ListModuleContentsUseCase(
       inMemoryJourneysRepository,
       inMemoryModulesRepository,
       inMemoryLessonsRepository,
       inMemoryExamsRepository,
       inMemoryModuleContentsRepository,
+      inMemoryLessonProgressRepository,
     )
   })
 
@@ -98,6 +102,7 @@ describe('Get all journeys Use Case', () => {
       plantId: '01',
       journeySlug: 'journey',
       moduleSlug: 'module-01',
+      userId: '01',
     })
 
     expect(response).toEqual(
@@ -112,6 +117,8 @@ describe('Get all journeys Use Case', () => {
           pdf_url: null,
           order: 1,
           type: 'lesson',
+          completed: false,
+          locked: false,
         }),
         expect.objectContaining({
           id: '02',
@@ -123,6 +130,8 @@ describe('Get all journeys Use Case', () => {
           pdf_url: 'uploads/plant/journey/module/exemplo.pdf',
           order: 2,
           type: 'lesson',
+          completed: false,
+          locked: true,
         }),
         expect.objectContaining({
           id: '01',
@@ -134,6 +143,8 @@ describe('Get all journeys Use Case', () => {
           pdf_url: null,
           order: 3,
           type: 'exam',
+          completed: false,
+          locked: true,
         }),
       ]),
     )

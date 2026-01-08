@@ -252,3 +252,49 @@ export const examAnswers = pgTable(
   },
   (table) => [uniqueIndex().on(table.questionId, table.order)],
 )
+
+export const lessonProgress = pgTable(
+  'lesson_progress',
+  {
+    id: uuid().primaryKey().defaultRandom(),
+
+    userId: uuid()
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+
+    lessonId: uuid()
+      .notNull()
+      .references(() => lessons.id, { onDelete: 'cascade' }),
+
+    completed: boolean().notNull().default(true),
+
+    completed_at: timestamp({ withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex().on(table.userId, table.lessonId),
+  ],
+)
+
+
+export const examAttempts = pgTable(
+  'exam_attempts',
+  {
+    id: uuid().primaryKey().defaultRandom(),
+
+    userId: uuid()
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+
+    examId: uuid()
+      .notNull()
+      .references(() => exams.id, { onDelete: 'cascade' }),
+
+    score: integer().notNull(),
+    approved: boolean().notNull(),
+
+    created_at: timestamp({ withTimezone: true }).notNull().defaultNow(),
+  },
+)
+
