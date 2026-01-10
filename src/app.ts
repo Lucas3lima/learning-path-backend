@@ -21,6 +21,7 @@ import { selectPlantRoute } from './routes/auth/select-plant.ts'
 import { createExams } from './routes/exams/create-exams.ts'
 import { deleteExams } from './routes/exams/delete-exams.ts'
 import { editExams } from './routes/exams/edit-exams.ts'
+import { finishExam } from './routes/exams/finish-exam.ts'
 import { GetExamContentsRoute } from './routes/exams/get-exam-contents.ts'
 import { startExam } from './routes/exams/start-exam.ts'
 import { createJourneys } from './routes/journeys/create-journeys.ts'
@@ -136,6 +137,7 @@ app.register(editExams)
 app.register(deleteExams)
 app.register(GetExamContentsRoute)
 app.register(startExam)
+app.register(finishExam)
 
 // QUESTIONS
 app.register(createQuestionsAndAnswers)

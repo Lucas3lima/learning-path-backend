@@ -29,6 +29,15 @@ export class InMemoryExamAnswersRepository implements ExamAnswersRepository {
 
     return answers
   }
+  async findManyCorrectByQuestionIds(
+    questionIds: string[],
+  ): Promise<ExamAnswers[]> {
+    return this.items.filter(
+      (answer) =>
+        questionIds.includes(answer.questionId) &&
+        answer.isCorrect === true,
+    )
+  }
 
   async findByQuestionId(questionId: string): Promise<ExamAnswers[]> {
     return this.items

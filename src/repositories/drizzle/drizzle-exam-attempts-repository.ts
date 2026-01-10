@@ -39,6 +39,7 @@ export class DrizzleExamAttemptsRepository implements ExamAttemptsRepository {
             eq(examAttempts.userId, userId),
             eq(examAttempts.examId, examId),
             isNotNull(examAttempts.finished_at),
+            eq(examAttempts.approved,true)
         ),
         )
         .limit(1)

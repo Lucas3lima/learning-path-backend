@@ -29,7 +29,9 @@ export class InMemoryExamAttemptsRepository implements ExamAttemptsRepository {
       (item) =>
         item.userId === userId &&
         item.examId === examId &&
-        item.finished_at != null,
+        item.finished_at != null &&
+        item.approved === true
+        ,
     )
 
     return attempt ?? null
