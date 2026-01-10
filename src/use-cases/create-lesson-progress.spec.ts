@@ -4,6 +4,7 @@ import { LessonAlreadyCompletedError } from '../_erros/lesson-already-completed-
 import { LessonLockedError } from '../_erros/lesson-locked-error.ts'
 import { LessonsNotFoundError } from '../_erros/lessons-not-found-error.ts'
 import { ModulesNotFoundError } from '../_erros/modules-not-found-error.ts'
+import { InMemoryExamAttemptsRepository } from '../repositories/in-memory/in-memory-exam-attempts-repository.ts'
 import { InMemoryJourneysRepository } from '../repositories/in-memory/in-memory-journeys-repository.ts'
 import { InMemoryLessonProgressRepository } from '../repositories/in-memory/in-memory-lesson-progress-repository.ts'
 import { InMemoryLessonsRepository } from '../repositories/in-memory/in-memory-lessons-repository.ts'
@@ -16,6 +17,7 @@ let inMemoryModulesRepository: InMemoryModulesRepository
 let inMemoryLessonsRepository: InMemoryLessonsRepository
 let inMemoryModuleContentsRepository: InMemoryModuleContentsRepository
 let inMemoryLessonProgressRepository: InMemoryLessonProgressRepository
+let inMemoryExamAttemptsRepository: InMemoryExamAttemptsRepository
 let sut: CreateLessonProgresssUseCase
 
 describe('Create Lessons Use Case', () => {
@@ -25,6 +27,7 @@ describe('Create Lessons Use Case', () => {
     inMemoryLessonsRepository = new InMemoryLessonsRepository()
     inMemoryModuleContentsRepository = new InMemoryModuleContentsRepository()
     inMemoryLessonProgressRepository = new InMemoryLessonProgressRepository()
+    inMemoryExamAttemptsRepository = new InMemoryExamAttemptsRepository()
 
     sut = new CreateLessonProgresssUseCase(
       inMemoryJourneysRepository,
@@ -32,6 +35,7 @@ describe('Create Lessons Use Case', () => {
       inMemoryLessonsRepository,
       inMemoryModuleContentsRepository,
       inMemoryLessonProgressRepository,
+      inMemoryExamAttemptsRepository,
     )
   })
 

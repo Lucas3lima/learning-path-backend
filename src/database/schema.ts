@@ -291,10 +291,15 @@ export const examAttempts = pgTable(
       .notNull()
       .references(() => exams.id, { onDelete: 'cascade' }),
 
-    score: integer().notNull(),
-    approved: boolean().notNull(),
+    score: integer(),          
+    approved: boolean(),       
 
-    created_at: timestamp({ withTimezone: true }).notNull().defaultNow(),
+    started_at: timestamp({ withTimezone: true })
+      .notNull()
+      .defaultNow(),
+
+    finished_at: timestamp({ withTimezone: true }),
   },
 )
+
 

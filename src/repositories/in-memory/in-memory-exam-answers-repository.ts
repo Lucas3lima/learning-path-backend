@@ -7,7 +7,14 @@ import type {
 
 export class InMemoryExamAnswersRepository implements ExamAnswersRepository {
   public items: ExamAnswers[] = []
-
+  
+  async findManyByQuestionIds(
+    questionIds: string[],
+  ): Promise<ExamAnswers[]> {
+    return this.items.filter((answer) =>
+      questionIds.includes(answer.questionId),
+    )
+  }
   async createMany(data: CreateExamAnswersInput[]) {
     const answers = data.map((answer) => ({
       id: answer.id ?? crypto.randomUUID(),

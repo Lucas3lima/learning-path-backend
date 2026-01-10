@@ -16,6 +16,8 @@ export interface ExamAnswersRepository {
 
   findByQuestionId(questionId: string): Promise<ExamAnswers[]>
 
+  findManyByQuestionIds(questionIds: string[]): Promise<ExamAnswers[]>
+
   edit(data: EditExamAnswersInput): Promise<ExamAnswers | null>
 
   deleteByQuestionId(questionId: string): Promise<boolean>

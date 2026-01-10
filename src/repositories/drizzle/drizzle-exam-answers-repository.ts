@@ -1,4 +1,4 @@
-import { eq, sql } from 'drizzle-orm'
+import { eq, inArray, sql } from 'drizzle-orm'
 import { db } from '../../database/client.ts'
 import { examAnswers } from '../../database/schema.ts'
 import type {
@@ -23,6 +23,18 @@ export class DrizzleExamAnswersRepository implements ExamAnswersRepository {
       .orderBy(examAnswers.order)
 
     return result
+  }
+
+  async findManyByQuestionIds(questionIds: string[]) {
+    if (questionIds.length === 0) {
+      return []
+    }
+
+    return await db
+      .select()
+      .from(examAnswers)
+      .where(inArray(examAnswers.questionId, questionIds))
+      .orderBy(examAnswers.questionId, examAnswers.order)
   }
 
   async edit(data: EditExamAnswersInput): Promise<ExamAnswers | null> {

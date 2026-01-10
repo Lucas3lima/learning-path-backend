@@ -22,6 +22,7 @@ import { createExams } from './routes/exams/create-exams.ts'
 import { deleteExams } from './routes/exams/delete-exams.ts'
 import { editExams } from './routes/exams/edit-exams.ts'
 import { GetExamContentsRoute } from './routes/exams/get-exam-contents.ts'
+import { startExam } from './routes/exams/start-exam.ts'
 import { createJourneys } from './routes/journeys/create-journeys.ts'
 import { deleteJourneys } from './routes/journeys/delete-journeys.ts'
 import { editJourneys } from './routes/journeys/edit-journeys.ts'
@@ -134,6 +135,7 @@ app.register(createExams)
 app.register(editExams)
 app.register(deleteExams)
 app.register(GetExamContentsRoute)
+app.register(startExam)
 
 // QUESTIONS
 app.register(createQuestionsAndAnswers)
