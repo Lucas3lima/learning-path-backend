@@ -57,6 +57,25 @@ export class DrizzleLessonProgressRepository
         ),
       )
   }
+  async findManyCompletedByUserAndLessonIds(
+    userId: string,
+    lessonIds: string[],
+  ): Promise<LessonProgress[]> {
+    if (lessonIds.length === 0) {
+      return []
+    }
+
+    return db
+      .select()
+      .from(lessonProgress)
+      .where(
+        and(
+          eq(lessonProgress.userId, userId),
+          inArray(lessonProgress.lessonId, lessonIds),
+          eq(lessonProgress.completed,true),
+        ),
+      )
+  }
 
   async deleteByUserAndLesson(
     userId: string,

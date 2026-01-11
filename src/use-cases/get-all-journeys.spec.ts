@@ -1,14 +1,20 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+import { InMemoryExamAttemptsRepository } from '../repositories/in-memory/in-memory-exam-attempts-repository.ts'
 import { InMemoryJourneysRepository } from '../repositories/in-memory/in-memory-journeys-repository.ts'
 import { InMemoryJourneySectorsRepository } from '../repositories/in-memory/in-memory-journeys-sectors-repository.ts'
+import { InMemoryLessonProgressRepository } from '../repositories/in-memory/in-memory-lesson-progress-repository.ts'
+import { InMemoryModuleContentsRepository } from '../repositories/in-memory/in-memory-module-contents-repository.ts'
 import { InMemoryModulesRepository } from '../repositories/in-memory/in-memory-modules-repository.ts'
 import { InMemoryUsersRepository } from '../repositories/in-memory/in-memory-user-repository.ts'
 import { GetAllJourneysUseCase } from './get-all-journeys.ts'
 
 let inMemoryUsersRepository: InMemoryUsersRepository
-let inMemoryjourneysSectorsRepository: InMemoryJourneySectorsRepository
 let inMemoryJourneysRepository: InMemoryJourneysRepository
 let inMemoryModulesRepository: InMemoryModulesRepository
+let inMemoryjourneysSectorsRepository: InMemoryJourneySectorsRepository
+let inMemoryModuleContentsRepository: InMemoryModuleContentsRepository
+let inMemoryLessonProgressRepository: InMemoryLessonProgressRepository
+let inMemoryExamAttemptsRepository: InMemoryExamAttemptsRepository
 let sut: GetAllJourneysUseCase
 
 describe('Get all journeys Use Case', () => {
@@ -18,11 +24,17 @@ describe('Get all journeys Use Case', () => {
     inMemoryJourneysRepository = new InMemoryJourneysRepository()
     inMemoryModulesRepository = new InMemoryModulesRepository()
     inMemoryjourneysSectorsRepository = new InMemoryJourneySectorsRepository()
+    inMemoryModuleContentsRepository = new InMemoryModuleContentsRepository()
+    inMemoryLessonProgressRepository = new InMemoryLessonProgressRepository()
+    inMemoryExamAttemptsRepository = new InMemoryExamAttemptsRepository()
     sut = new GetAllJourneysUseCase(
       inMemoryUsersRepository,
       inMemoryJourneysRepository,
       inMemoryModulesRepository,
       inMemoryjourneysSectorsRepository,
+      inMemoryModuleContentsRepository,
+      inMemoryLessonProgressRepository,
+      inMemoryExamAttemptsRepository
     )
 
     await inMemoryUsersRepository.create({
@@ -71,6 +83,7 @@ describe('Get all journeys Use Case', () => {
 
     const response = await sut.execute({
       plantId: '01',
+      userId: '01'
     })
 
     expect(response).toEqual(
@@ -82,6 +95,8 @@ describe('Get all journeys Use Case', () => {
           level: 'Advanced',
           totalHours: 6,
           totalModules: 2,
+          progress: 0,
+          completed: false,
           responsible: expect.objectContaining({
             id: '01',
             name: expect.any(String),

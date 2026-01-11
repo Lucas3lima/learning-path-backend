@@ -32,8 +32,8 @@ Tecnologias: **Node.js + Fastify + Drizzle ORM + JWT**
 - [x] Listar todas as journeys
 - [x] `get-journey-by-slug` com módulos/aulas
 - [ ] Journey pertencente a planta
-- [ ] Registar progresso e porcentagem
-- [ ] Completar journey
+- [x] Registar progresso e porcentagem
+- [x] Completar journey
 - [ ] Gerar certificado
 
 ---
@@ -43,10 +43,10 @@ Tecnologias: **Node.js + Fastify + Drizzle ORM + JWT**
 - [x] Editar módulo
 - [x] Deletar módulo
 - [x] Listar módulos da journey
-- [ ] Obrigatoriedade de ordem
+- [x] Obrigatoriedade de ordem
 - [ ] Bloqueio de acesso se módulo anterior não concluído
 - [ ] Progresso do módulo
-- [ ] Registro e controle de tentativas da prova
+- [x] Registro e controle de tentativas da prova
 
 ---
 
@@ -55,9 +55,8 @@ Tecnologias: **Node.js + Fastify + Drizzle ORM + JWT**
 - [x] Editar aula
 - [x] Deletar aula
 - [x] Listar aulas do módulo
-- [ ] Marcar aula como concluída
-- [ ] Controle sequencial (não pular aula)
-- [ ] Progresso da aula
+- [x] Marcar aula como concluída
+- [x] Progresso da aula
 
 ---
 
@@ -66,10 +65,10 @@ Tecnologias: **Node.js + Fastify + Drizzle ORM + JWT**
 - [x] Criar questões e alternativas
 - [x] Editar provas
 - [x] Listar provas
-- [ ] Enviar respostas
-- [ ] Calcular nota
+- [x] Enviar respostas
+- [x] Calcular nota
 - [ ] Permitir 3 tentativas
-- [ ] Nota mínima 80%
+- [x] Nota mínima 80%
 - [ ] Resetar progresso do módulo após 3 reprovações
 
 ---
@@ -84,23 +83,9 @@ Tecnologias: **Node.js + Fastify + Drizzle ORM + JWT**
 
 ---
 
-## 📊 PROGRESSO
-- [ ] Salvar progresso por aula
-- [ ] Salvar progresso por módulo
-- [ ] Salvar progresso por journey
-- [ ] Controle de datas
-- [ ] Histórico de tentativas
-- [ ] Endpoints:
-  - [ ] get-user-progress
-  - [ ] mark-lesson-completed
-  - [ ] complete-module
-  - [ ] complete-journey
-
----
-
 ## 🏢 PLANT FILTER
-- [ ] Todas as queries devem filtrar por `plant_id`
-- [ ] Apenas usuários da planta podem visualizar
+- [x] Todas as queries devem filtrar por `plant_id`
+- [x] Apenas usuários da planta podem visualizar
 - [ ] Admin global pode ver todas? (definir regra)
 
 ---

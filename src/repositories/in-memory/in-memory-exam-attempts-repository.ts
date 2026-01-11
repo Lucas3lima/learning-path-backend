@@ -104,4 +104,22 @@ export class InMemoryExamAttemptsRepository implements ExamAttemptsRepository {
     attempt.finished_at = new Date()
   }
 
+  async findManyFinishedByUserAndExamIds(
+    userId: string,
+    examIds: string[],
+  ) {
+    if (examIds.length === 0) {
+      return []
+    }
+
+    return this.items.filter(
+      (item) =>
+        item.userId === userId &&
+        examIds.includes(item.examId) &&
+        !!item.finished_at &&
+        item.approved === true
+        ,
+    )
+  }
+
 }

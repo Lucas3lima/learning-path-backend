@@ -1,8 +1,11 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod'
 import { PlantNotSelectedError } from '../../_erros/plant-not-selected-error.ts'
+import { DrizzleExamAttemptsRepository } from '../../repositories/drizzle/drizzle-exam-attempts-repository.ts'
 import { DrizzleJourneysRepository } from '../../repositories/drizzle/drizzle-journeys-repository.ts'
 import { DrizzleJourneySectorsRepository } from '../../repositories/drizzle/drizzle-journeys-sectors-repository.ts'
+import { DrizzleLessonProgressRepository } from '../../repositories/drizzle/drizzle-lesson-progress-repository.ts'
+import { DrizzleModuleContentsRepository } from '../../repositories/drizzle/drizzle-module-contents-repository.ts'
 import { DrizzleModulesRepository } from '../../repositories/drizzle/drizzle-modules-repository.ts'
 import { DrizzleUsersRepository } from '../../repositories/drizzle/drizzle-users-repository.ts'
 import { GetAllJourneysUseCase } from '../../use-cases/get-all-journeys.ts'
@@ -46,6 +49,8 @@ export const getAllJourneysRoute: FastifyPluginAsyncZod = async (app) => {
 
               totalHours: z.number(),
               totalModules: z.number(),
+              progress: z.number(),
+              completed: z.boolean()
             }),
           ),
           400: z.object({
@@ -65,14 +70,21 @@ export const getAllJourneysRoute: FastifyPluginAsyncZod = async (app) => {
         const journeysRepository = new DrizzleJourneysRepository()
         const modulesRepository = new DrizzleModulesRepository()
         const journeysSectorsRepository = new DrizzleJourneySectorsRepository()
+        const moduleContentsRepository = new DrizzleModuleContentsRepository()
+        const lessonProgressRepository = new DrizzleLessonProgressRepository()
+        const examAttemptsRepository = new DrizzleExamAttemptsRepository()
         const sut = new GetAllJourneysUseCase(
           usersRepository,
           journeysRepository,
           modulesRepository,
           journeysSectorsRepository,
+          moduleContentsRepository,
+          lessonProgressRepository,
+          examAttemptsRepository,
         )
         const journeysResponse = await sut.execute({
           plantId: user.plantId,
+          userId: user.sub
         })
         return reply.status(200).send(journeysResponse)
       } catch (err) {

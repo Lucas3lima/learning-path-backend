@@ -36,6 +36,11 @@ export interface ExamAttemptsRepository {
     examId: string,
   ): Promise<void>
 
+  findManyFinishedByUserAndExamIds(
+    userId: string,
+    examIds: string[],
+  ): Promise<ExamAttempts[]>
+
 }
 
 

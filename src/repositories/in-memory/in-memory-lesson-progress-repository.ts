@@ -17,7 +17,7 @@ export class InMemoryLessonProgressRepository
     return progress ?? null
   }
 
-   async findManyByUserAndLessonIds(
+  async findManyByUserAndLessonIds(
     userId: string,
     lessonIds: string[],
   ) {
@@ -25,6 +25,18 @@ export class InMemoryLessonProgressRepository
       (item) =>
         item.userId === userId &&
         lessonIds.includes(item.lessonId),
+    )
+  }
+  async findManyCompletedByUserAndLessonIds(
+    userId: string,
+    lessonIds: string[],
+  ) {
+    return this.items.filter(
+      (item) =>
+        item.userId === userId &&
+        lessonIds.includes(item.lessonId) &&
+        item.completed === true
+        ,
     )
   }
 

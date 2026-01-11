@@ -1,10 +1,16 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod'
+import { JourneysNotFoundError } from '../../_erros/journeys-not-found-error.ts'
 import { NotFoundError } from '../../_erros/not-found-error.ts'
 import { PlantNotSelectedError } from '../../_erros/plant-not-selected-error.ts'
+import { UsersNotFoundError } from '../../_erros/users-not-found-error.ts'
+import { DrizzleExamAttemptsRepository } from '../../repositories/drizzle/drizzle-exam-attempts-repository.ts'
+import { DrizzleExamsRepository } from '../../repositories/drizzle/drizzle-exams-repository.ts'
 import { DrizzleJourneysRepository } from '../../repositories/drizzle/drizzle-journeys-repository.ts'
 import { DrizzleJourneySectorsRepository } from '../../repositories/drizzle/drizzle-journeys-sectors-repository.ts'
+import { DrizzleLessonProgressRepository } from '../../repositories/drizzle/drizzle-lesson-progress-repository.ts'
 import { DrizzleLessonsRepository } from '../../repositories/drizzle/drizzle-lessons-repository.ts'
+import { DrizzleModuleContentsRepository } from '../../repositories/drizzle/drizzle-module-contents-repository.ts'
 import { DrizzleModulesRepository } from '../../repositories/drizzle/drizzle-modules-repository.ts'
 import { DrizzleUsersRepository } from '../../repositories/drizzle/drizzle-users-repository.ts'
 import { GetJourneyOverviewUseCase } from '../../use-cases/get-journey-overview.ts'
@@ -55,11 +61,15 @@ export const getJourneyOverviewRoute: FastifyPluginAsyncZod = async (app) => {
                 hour: z.number(),
                 description: z.string().nullable(),
                 totalLessons: z.number(),
+                totalExams: z.number(),
+                totalCompleted: z.number(),
               }),
             ),
 
             totalHours: z.number(),
             totalModules: z.number(),
+            progress: z.number(),
+            completed: z.boolean(),
           }),
           400: z.object({
             message: z.string(),
@@ -80,26 +90,38 @@ export const getJourneyOverviewRoute: FastifyPluginAsyncZod = async (app) => {
         const modulesRepository = new DrizzleModulesRepository()
         const journeysSectorsRepository = new DrizzleJourneySectorsRepository()
         const lessonsRepository = new DrizzleLessonsRepository()
+        const examsRepository = new DrizzleExamsRepository()
+        const moduleContentsRepository = new DrizzleModuleContentsRepository()
+        const lessonProgressRepository = new DrizzleLessonProgressRepository()
+        const examAttemptsRepository = new DrizzleExamAttemptsRepository()
         const sut = new GetJourneyOverviewUseCase(
           usersRepository,
           journeysRepository,
           modulesRepository,
           journeysSectorsRepository,
           lessonsRepository,
+          examsRepository,
+          moduleContentsRepository,
+          lessonProgressRepository,
+          examAttemptsRepository,
         )
 
         const journey_overview = await sut.execute({
           slug,
           plantId: user.plantId,
+          userId: user.sub,
         })
 
         return reply.status(200).send(journey_overview)
       } catch (err) {
-        if (err instanceof PlantNotSelectedError) {
+        if (
+          err instanceof PlantNotSelectedError ||
+          err instanceof UsersNotFoundError
+        ) {
           return reply.status(400).send({ message: err.message })
         }
 
-        if (err instanceof NotFoundError) {
+        if (err instanceof JourneysNotFoundError) {
           return reply.status(404).send({ message: err.message })
         }
 

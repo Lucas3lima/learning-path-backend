@@ -1,14 +1,20 @@
 import { JourneysNotFoundError } from '../_erros/journeys-not-found-error.ts'
 import { PlantNotSelectedError } from '../_erros/plant-not-selected-error.ts'
+import { UsersNotFoundError } from '../_erros/users-not-found-error.ts'
+import type { ExamAttemptsRepository } from '../repositories/exam-attempts-repository.ts'
+import type { ExamsRepository } from '../repositories/exams-repository.ts'
 import type { JourneysRepository } from '../repositories/journeys-repository.ts'
 import type { JourneysSectorsRepository } from '../repositories/journeys-sectors-repository.ts'
+import type { LessonProgressRepository } from '../repositories/lesson-progress-repository.ts'
 import type { LessonsRepository } from '../repositories/lessons-repository.ts'
+import type { ModuleContentsRepository } from '../repositories/module-contents-repository.ts'
 import type { ModulesRepository } from '../repositories/modules-repository.ts'
 import type { UsersRepository } from '../repositories/users-repository.ts'
 
 interface GetJourneyOverviewUseCaseRequest {
   plantId?: string
   slug: string
+  userId: string
 }
 
 interface GetJourneyOverviewUseCaseResponse {
@@ -34,9 +40,13 @@ interface GetJourneyOverviewUseCaseResponse {
     hour: number
     description: string | null
     totalLessons: number
+    totalExams: number
+    totalCompleted: number
   }[]
   totalHours: number
   totalModules: number
+  progress: number
+  completed: boolean
 }
 
 export class GetJourneyOverviewUseCase {
@@ -45,6 +55,10 @@ export class GetJourneyOverviewUseCase {
   private modulesRepository: ModulesRepository
   private journeysSectorsRepository: JourneysSectorsRepository
   private lessonsRepository: LessonsRepository
+  private examsRepository: ExamsRepository
+  private moduleContentsRepository: ModuleContentsRepository
+  private lessonProgressRepository: LessonProgressRepository
+  private examAttemptsRepository: ExamAttemptsRepository
 
   constructor(
     usersRepository: UsersRepository,
@@ -52,20 +66,33 @@ export class GetJourneyOverviewUseCase {
     modulesRepository: ModulesRepository,
     journeysSectorsRepository: JourneysSectorsRepository,
     lessonsRepository: LessonsRepository,
+    examsRepository: ExamsRepository,
+    moduleContentsRepository: ModuleContentsRepository,
+    lessonProgressRepository: LessonProgressRepository,
+    examAttemptsRepository: ExamAttemptsRepository,
   ) {
     this.usersRepository = usersRepository
     this.journeysRepository = journeysRepository
     this.modulesRepository = modulesRepository
     this.journeysSectorsRepository = journeysSectorsRepository
     this.lessonsRepository = lessonsRepository
+    this.examsRepository = examsRepository
+    this.moduleContentsRepository = moduleContentsRepository
+    this.lessonProgressRepository = lessonProgressRepository
+    this.examAttemptsRepository = examAttemptsRepository
   }
 
   async execute({
     plantId,
     slug,
+    userId,
   }: GetJourneyOverviewUseCaseRequest): Promise<GetJourneyOverviewUseCaseResponse> {
     if (!plantId) {
       throw new PlantNotSelectedError()
+    }
+
+    if (!userId) {
+      throw new UsersNotFoundError()
     }
 
     // 1️⃣ Buscar a journey pelo slug e plantId
@@ -95,8 +122,17 @@ export class GetJourneyOverviewUseCase {
     const modules = await Promise.all(
       journeyModules.map(async (m) => {
         const lessons = await this.lessonsRepository.findByModuleId(m.id)
-        console.log(lessons)
+        const exams = await this.examsRepository.findByModuleId(m.id)
         const totalLessons = lessons.length
+        const totalExams = exams.length
+
+        const lessonIds = lessons.map((l) => l.id!)
+        const lessonsCompleted = await this.lessonProgressRepository.findManyByUserAndLessonIds(userId,lessonIds)
+
+        const examIds = exams.map((e) => e.id!)
+        const examsCompleted = await this.examAttemptsRepository.findManyFinishedByUserAndExamIds(userId,examIds)
+
+        const totalCompleted = lessonsCompleted.length + examsCompleted.length
 
         return {
           id: m.id,
@@ -106,6 +142,8 @@ export class GetJourneyOverviewUseCase {
           hour: m.hour,
           description: m.description,
           totalLessons,
+          totalExams,
+          totalCompleted
         }
       }),
     )
@@ -113,6 +151,41 @@ export class GetJourneyOverviewUseCase {
     // 6️⃣ Calcular métricas do journey
     const totalHours = journeyModules.reduce((acc, m) => acc + m.hour, 0)
     const totalModules = modules.length
+
+    //7. progresso
+    const allContents = []
+    for (const module of journeyModules) {
+      const contents = await this.moduleContentsRepository.findByModuleId(
+        module.id,
+      )
+      allContents.push(...contents)
+    }
+
+    const lessonContents = allContents.filter((c) => c.type === 'lesson')
+    const examContents = allContents.filter((c) => c.type === 'exam')
+
+    const totalContents = lessonContents.length + examContents.length
+
+    const completedLessons =
+      await this.lessonProgressRepository.findManyCompletedByUserAndLessonIds(
+        userId,
+        lessonContents.map((c) => c.lessonId!),
+      )
+
+    const completedExams =
+      await this.examAttemptsRepository.findManyFinishedByUserAndExamIds(
+        userId,
+        examContents.map((e) => e.examId!),
+      )
+
+    const completedCount = completedLessons.length + completedExams.length
+
+    const progress =
+      totalContents === 0
+        ? 0
+        : Math.round((completedCount / totalContents) * 100)
+
+    const completed = progress === 100
 
     return {
       id: journey.id,
@@ -135,6 +208,8 @@ export class GetJourneyOverviewUseCase {
       modules,
       totalHours,
       totalModules,
+      progress,
+      completed,
     }
   }
 }

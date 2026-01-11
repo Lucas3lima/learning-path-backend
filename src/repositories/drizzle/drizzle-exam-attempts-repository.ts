@@ -1,4 +1,4 @@
-import { and, eq, isNotNull, isNull } from 'drizzle-orm'
+import { and, eq, inArray, isNotNull, isNull } from 'drizzle-orm'
 import { db } from '../../database/client.ts'
 import { examAttempts } from '../../database/schema.ts'
 import type {
@@ -77,24 +77,45 @@ export class DrizzleExamAttemptsRepository implements ExamAttemptsRepository {
 
     return result.rowCount > 0
   }
-    async finishActiveAttemptAsFailed(
+  async finishActiveAttemptAsFailed(
+  userId: string,
+  examId: string,
+  ) {
+  await db
+      .update(examAttempts)
+      .set({
+      finished_at: new Date(),
+      score: 0,
+      approved: false,
+      })
+      .where(
+      and(
+          eq(examAttempts.userId, userId),
+          eq(examAttempts.examId, examId),
+          isNull(examAttempts.finished_at),
+      ),
+      )
+  }
+
+  async findManyFinishedByUserAndExamIds(
     userId: string,
-    examId: string,
-    ) {
-    await db
-        .update(examAttempts)
-        .set({
-        finished_at: new Date(),
-        score: 0,
-        approved: false,
-        })
-        .where(
-        and(
-            eq(examAttempts.userId, userId),
-            eq(examAttempts.examId, examId),
-            isNull(examAttempts.finished_at),
-        ),
-        )
+    examIds: string[],
+  ) {
+    if (examIds.length === 0) {
+      return []
     }
+
+    return db
+      .select()
+      .from(examAttempts)
+      .where(
+        and(
+          eq(examAttempts.userId, userId),
+          inArray(examAttempts.examId, examIds),
+          eq(examAttempts.approved,true),
+          isNotNull(examAttempts.finished_at)
+        ),
+      )
+  }
 
 }

@@ -24,4 +24,9 @@ export interface LessonProgressRepository {
     userId: string,
     lessonId: string,
   ): Promise<boolean>
+
+  findManyCompletedByUserAndLessonIds(
+    userId: string,
+    lessonIds: string[],
+  ): Promise<LessonProgress[]>
 }
