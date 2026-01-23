@@ -1,7 +1,6 @@
 import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod'
 import { JourneysNotFoundError } from '../../_erros/journeys-not-found-error.ts'
-import { NotFoundError } from '../../_erros/not-found-error.ts'
 import { PlantNotSelectedError } from '../../_erros/plant-not-selected-error.ts'
 import { UsersNotFoundError } from '../../_erros/users-not-found-error.ts'
 import { DrizzleExamAttemptsRepository } from '../../repositories/drizzle/drizzle-exam-attempts-repository.ts'

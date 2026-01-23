@@ -3,6 +3,7 @@ import { db } from '../../database/client.ts'
 import { plants } from '../../database/schema.ts'
 import type {
   CreatePlantInput,
+  Plant,
   PlantsRepository,
 } from '../plants-repository.ts'
 
@@ -21,5 +22,8 @@ export class DrizzlePlantsRepository implements PlantsRepository {
     const [plant] = await db.insert(plants).values(data).returning()
 
     return plant
+  }
+  async getAll() {
+    return await db.select().from(plants)
   }
 }

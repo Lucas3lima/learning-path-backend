@@ -15,17 +15,16 @@ export const authenticateRoute: FastifyPluginAsyncZod = async (app) => {
         tags: ['auth'],
         summary: 'Authenticate with email & password',
         body: z.object({
-          email: z.email(),
+          email: z.string(),
           password: z.string(),
         }),
         response: {
           201: z.object({
-            token: z.string(),
             requiresPlantSelection: z.boolean().optional(),
             plants: z
               .array(
                 z.object({
-                  id: z.string(), // UUID
+                  id: z.string(),
                   name: z.string(),
                   role: z.string(),
                 }),
@@ -44,10 +43,9 @@ export const authenticateRoute: FastifyPluginAsyncZod = async (app) => {
       try {
         const usersRepository = new DrizzleUsersRepository()
         const userPlantsRepository = new DrizzleUserPlantsRepository()
+
         const authenticateUseCase = new AuthenticateUseCase(usersRepository)
-        const linkedPlantsUseCase = new LinkedPlantsUseCase(
-          userPlantsRepository,
-        )
+        const linkedPlantsUseCase = new LinkedPlantsUseCase(userPlantsRepository)
 
         const { user } = await authenticateUseCase.execute({ email, password })
 
@@ -55,6 +53,7 @@ export const authenticateRoute: FastifyPluginAsyncZod = async (app) => {
           userId: user.id,
         })
 
+        // 🟢 Caso 1: Usuário possui apenas uma planta → login direto
         if (linkedPlants.length === 1) {
           const token = await reply.jwtSign(
             {
@@ -64,25 +63,39 @@ export const authenticateRoute: FastifyPluginAsyncZod = async (app) => {
               plantId: linkedPlants[0].id,
             },
             {
-              sign: {
-                expiresIn: '2d',
-              },
+              sign: { expiresIn: '2d' },
             },
           )
 
-          return reply.status(201).send({ token })
+          reply
+            .setCookie('token', token, {
+              path: '/',
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: 'strict',
+              maxAge: 60 * 60 * 24 * 2, // 2 dias
+            })
+            .status(201)
+            .send()
+
+          return
         }
 
-        // 5) Se possuir mais de uma planta → retorna lista para o usuário escolher
+        // 🟡 Caso 2: Mais de uma planta → token curto (pré-autenticação)
         const shortToken = await reply.jwtSign(
-          {
-            sub: user.id,
-          },
+          { sub: user.id },
           { sign: { expiresIn: '2m' } },
         )
 
+        reply.setCookie('pre_auth', shortToken, {
+          path: '/',
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          maxAge: 60 * 2,
+        })
+
         return reply.status(201).send({
-          token: shortToken,
           requiresPlantSelection: true,
           plants: linkedPlants,
         })
@@ -90,6 +103,7 @@ export const authenticateRoute: FastifyPluginAsyncZod = async (app) => {
         if (err instanceof InvalidCredentialsError) {
           return reply.status(400).send({ message: err.message })
         }
+
         if (err instanceof NotFoundError) {
           return reply.status(400).send({ message: err.message })
         }

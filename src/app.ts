@@ -1,4 +1,5 @@
 import path from 'node:path'
+import fastifyCookie from '@fastify/cookie'
 import fastifyCors from '@fastify/cors'
 import fastifyJwt from '@fastify/jwt'
 import fastifyMultipart from '@fastify/multipart'
@@ -37,6 +38,7 @@ import { createModules } from './routes/modules/create-modules.ts'
 import { deleteModules } from './routes/modules/delete-modules.ts'
 import { editModules } from './routes/modules/edit-modules.ts'
 import { ListModuleLessonsRoute } from './routes/modules/list-module-contents.ts'
+import { getPlantsRoute } from './routes/plants/get-plants.ts'
 import { createLessonProgress } from './routes/progress/create-lesson-progress.ts'
 import { createQuestionsAndAnswers } from './routes/questions/create-questions-and-answers.ts'
 import { deleteExamQuestions } from './routes/questions/delete-questions.ts'
@@ -56,8 +58,14 @@ const app = fastify({
   },
 }).withTypeProvider<ZodTypeProvider>()
 
+app.register(fastifyCookie, {
+  secret: config.JWT_SECRET,
+  hook: 'onRequest',
+})
+
 app.register(fastifyCors, {
-  origin: true,
+  origin: 'http://localhost:5173',
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELTE', 'OPTIONS'],
 })
 
@@ -91,7 +99,12 @@ app.setValidatorCompiler(validatorCompiler)
 
 app.register(fastifyJwt, {
   secret: config.JWT_SECRET,
+  cookie: {
+    cookieName: 'token',
+    signed: false,
+  },
 })
+
 
 app.register(fastifyMultipart, {
   limits: {
@@ -104,10 +117,11 @@ app.register(fastifyStatic, {
   prefix: '/uploads/',
 })
 
+//PLANTS
+app.register(getPlantsRoute)
+// AUTH
 app.register(createAccountRoute)
 app.register(getUsersRoute)
-
-// AUTH
 app.register(authenticateRoute)
 app.register(getProfileRoute)
 app.register(selectPlantRoute)

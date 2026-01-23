@@ -15,30 +15,25 @@ export const selectPlantRoute: FastifyPluginAsyncZod = async (app) => {
       preHandler: [checkRequestJWT],
       schema: {
         tags: ['auth'],
-        summary: 'Select-plant',
+        summary: 'Select plant',
         body: z.object({
           plantId: z.uuid(),
         }),
         response: {
-          201: z.object({
-            token: z.string(),
-          }),
-          400: z.object({
-            message: z.string(),
-          }),
-          403: z.object({
-            message: z.string(),
-          }),
+          204: z.null(),
+          400: z.object({ message: z.string() }),
+          403: z.object({ message: z.string() }),
         },
       },
     },
     async (request, reply) => {
       const { plantId } = request.body
-      const result = getAuthenticatedUser(request)
+      const { sub: userId } = getAuthenticatedUser(request)
 
       try {
         const usersRepository = new DrizzleUsersRepository()
         const userPlantsRepository = new DrizzleUserPlantsRepository()
+
         const sut = new SelectPlantUseCase(
           usersRepository,
           userPlantsRepository,
@@ -46,28 +41,35 @@ export const selectPlantRoute: FastifyPluginAsyncZod = async (app) => {
 
         const { user, linkedPlants } = await sut.execute({
           plantId,
-          userId: result.sub,
+          userId,
         })
 
         const token = await reply.jwtSign(
           {
-            sub: result.sub,
+            sub: userId,
             role: user.role,
             plantRole: linkedPlants.role,
             plantId: linkedPlants.plantId,
           },
           {
-            sign: {
-              expiresIn: '2d',
-            },
+            sign: { expiresIn: '2d' },
           },
         )
 
-        return reply.status(201).send({ token })
+        reply.setCookie('token', token, {
+          path: '/',
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          maxAge: 60 * 60 * 24 * 2, // 2 dias
+        })
+
+        return reply.status(204).send()
       } catch (err) {
         if (err instanceof InvalidCredentialsError) {
           return reply.status(400).send({ message: err.message })
         }
+
         if (err instanceof PlantAccessDeniedError) {
           return reply.status(403).send({ message: err.message })
         }

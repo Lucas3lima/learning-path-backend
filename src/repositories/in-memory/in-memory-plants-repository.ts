@@ -29,4 +29,8 @@ export class InMemoryPlantsRepository implements PlantsRepository {
 
     return plant
   }
+
+  async getAll() {
+    return this.items
+  }
 }
