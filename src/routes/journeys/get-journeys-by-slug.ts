@@ -62,6 +62,7 @@ export const getJourneyOverviewRoute: FastifyPluginAsyncZod = async (app) => {
                 totalLessons: z.number(),
                 totalExams: z.number(),
                 totalCompleted: z.number(),
+                progress: z.number(),
               }),
             ),
 

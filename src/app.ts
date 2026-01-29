@@ -18,6 +18,7 @@ import { config } from './config/env.ts'
 import { authenticateRoute } from './routes/auth/authenticate.ts'
 import { createAccountRoute } from './routes/auth/create-account.ts'
 import { getProfileRoute } from './routes/auth/get-profile.ts'
+import { logoutRoute } from './routes/auth/logout-route.ts'
 import { selectPlantRoute } from './routes/auth/select-plant.ts'
 import { createExams } from './routes/exams/create-exams.ts'
 import { deleteExams } from './routes/exams/delete-exams.ts'
@@ -105,7 +106,6 @@ app.register(fastifyJwt, {
   },
 })
 
-
 app.register(fastifyMultipart, {
   limits: {
     fileSize: 10 * 1024 * 1024, //10MB
@@ -125,6 +125,7 @@ app.register(getUsersRoute)
 app.register(authenticateRoute)
 app.register(getProfileRoute)
 app.register(selectPlantRoute)
+app.register(logoutRoute)
 
 // JOURNEYS
 app.register(createJourneys)

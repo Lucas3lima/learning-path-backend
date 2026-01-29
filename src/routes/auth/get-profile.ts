@@ -2,6 +2,7 @@ import type { FastifyPluginAsyncZod } from 'fastify-type-provider-zod'
 import z from 'zod'
 import { NotFoundError } from '../../_erros/not-found-error.ts'
 import { plantRoleValues, userRoleValues } from '../../database/schema.ts'
+import { DrizzlePlantsRepository } from '../../repositories/drizzle/drizzle-plants-repository.ts'
 import { DrizzleUserPlantsRepository } from '../../repositories/drizzle/drizzle-userPlants-repository.ts'
 import { DrizzleUsersRepository } from '../../repositories/drizzle/drizzle-users-repository.ts'
 import { GetProfileUseCase } from '../../use-cases/get-profile.ts'
@@ -27,6 +28,8 @@ export const getProfileRoute: FastifyPluginAsyncZod = async (app) => {
               registration_number: z.string(),
               role: z.enum(userRoleValues),
               plantRole: z.enum(plantRoleValues),
+              plantId: z.string(),
+              plantName: z.string(),
             }),
           }),
           409: z.object({
@@ -41,9 +44,11 @@ export const getProfileRoute: FastifyPluginAsyncZod = async (app) => {
       try {
         const usersRepository = new DrizzleUsersRepository()
         const userPlantsRepository = new DrizzleUserPlantsRepository()
+        const plantRepository = new DrizzlePlantsRepository()
         const getProfileUseCase = new GetProfileUseCase(
           usersRepository,
           userPlantsRepository,
+          plantRepository,
         )
 
         const user = await getProfileUseCase.execute({

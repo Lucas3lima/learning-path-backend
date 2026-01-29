@@ -42,6 +42,7 @@ interface GetJourneyOverviewUseCaseResponse {
     totalLessons: number
     totalExams: number
     totalCompleted: number
+    progress: number
   }[]
   totalHours: number
   totalModules: number
@@ -134,6 +135,13 @@ export class GetJourneyOverviewUseCase {
 
         const totalCompleted = lessonsCompleted.length + examsCompleted.length
 
+        const progress =
+          totalCompleted === 0
+            ? 0
+            : Math.round((totalCompleted / (lessons.length + exams.length )) * 100)
+
+        
+
         return {
           id: m.id,
           title: m.title,
@@ -143,7 +151,8 @@ export class GetJourneyOverviewUseCase {
           description: m.description,
           totalLessons,
           totalExams,
-          totalCompleted
+          totalCompleted,
+          progress
         }
       }),
     )
